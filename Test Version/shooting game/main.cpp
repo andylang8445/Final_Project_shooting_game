@@ -22,6 +22,7 @@
 #define PY_origin 31
 int map[height][width],PX = PX_origin, PY = PY_origin;
 int previous_PX = PX, previous_PY = PY;
+int bullit[(height * width) - 3][2], bullit_top = 0;
 
 bool break_check = true;
 
@@ -63,10 +64,14 @@ void setting_screen()
 
 
 }
+
+
 int main()
 {
 	char kb_in;//contain the status of keyboard pressed
 
+	for (int i = 0; i < (height * width - 3); i++)
+		bullit[i][0] = bullit[i][1] = 0;
 	fff();//hide blinking cerser
 	system("title Shooting Game");//set the title of the screen
 	system("mode con cols=111 lines=35");//set the size of the screen
@@ -97,8 +102,11 @@ int main()
 			kb_in = _getch();
 			if (kb_in == 'l')
 			{
-				map[PY - 1][PX] = 4;
+				bullit[bullit_top][0] = PX;
+				bullit[bullit_top++][1] = PY - 1;
 
+				gotoxy(PX, PY - 1);
+				printf("|");
 			}
 
 			if (kb_in == 'w')
@@ -151,6 +159,29 @@ int main()
 				printf("=A=");
 			}
 		}
+		for (int i = 0; i < bullit_top; i++)
+		{
+			gotoxy(bullit[i][0], bullit[i][1]);
+			printf(" ");
+
+			if (map[bullit[i][0]][bullit[i][1]] != 0)
+			{
+				for (int j = i + 1; j < bullit_top; j++)
+				{
+					bullit[i][0] = bullit[i + 1][0];
+					bullit[i][1] = bullit[i + 1][1];
+				}
+				bullit_top--;
+				i--;
+			}
+			else
+			{
+				bullit[i][1]--;
+				gotoxy(bullit[i][0], bullit[i][1]);
+				printf("|");
+			}
+		}
+		Sleep(100);
 	}
 	_getch();
 }
