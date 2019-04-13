@@ -164,7 +164,13 @@ int main()
 			gotoxy(bullit[i][0], bullit[i][1]);
 			printf(" ");
 
-			if (map[bullit[i][0]][bullit[i][1]] != 0)
+			if (map[bullit[i][1]-1][bullit[i][0]] == 0)
+			{
+				bullit[i][1]--;
+				gotoxy(bullit[i][0], bullit[i][1]);
+				printf("|");
+			}
+			else
 			{
 				for (int j = i + 1; j < bullit_top; j++)
 				{
@@ -174,14 +180,7 @@ int main()
 				bullit_top--;
 				i--;
 			}
-			else
-			{
-				bullit[i][1]--;
-				gotoxy(bullit[i][0], bullit[i][1]);
-				printf("|");
-			}
 		}
-		Sleep(100);
+		Sleep(60);
 	}
-	_getch();
 }
