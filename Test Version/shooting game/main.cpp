@@ -68,10 +68,10 @@ void setting_screen()
 
 int main()
 {
+
+	bool trick_triger = false;
 	char kb_in;//contain the status of keyboard pressed
 
-	for (int i = 0; i < (height * width - 3); i++)
-		bullit[i][0] = bullit[i][1] = 0;
 	fff();//hide blinking cerser
 	system("title Shooting Game");//set the title of the screen
 	system("mode con cols=111 lines=35");//set the size of the screen
@@ -100,15 +100,6 @@ int main()
 		if (_kbhit())
 		{
 			kb_in = _getch();
-			if (kb_in == 'l')
-			{
-				bullit[bullit_top][0] = PX;
-				bullit[bullit_top++][1] = PY - 1;
-
-				gotoxy(PX, PY - 1);
-				printf("|");
-			}
-
 			if (kb_in == 'w')
 			{
 				if (PY > 1)
@@ -158,32 +149,34 @@ int main()
 				gotoxy(PX - 1, PY);
 				printf("=A=");
 			}
+
+			if (kb_in == 'l' && map[PY - 1][PX] == 0)
+			{
+				map[PY - 1][PX] = 4;
+				gotoxy(PX, PY - 1);
+				printf("|");
+
+			}
 		}
 		if (count_sleep % 9 == 0)
 		{
 			//always move bullit forword
-			for (int i = 0; i < bullit_top; i++)
+			for (int i = 0; i < height; i++)
 			{
-				gotoxy(bullit[i][0], bullit[i][1]);
-				printf(" ");
-
-				Sleep(1);
-
-				if (map[bullit[i][1] - 1][bullit[i][0]] == 0)
+				for (int j = 0; j < width; j++)
 				{
-					bullit[i][1]--;
-					gotoxy(bullit[i][0], bullit[i][1]);
-					printf("|");
-				}
-				else
-				{
-					for (int j = i + 1; j < bullit_top; j++)
+					if (map[i][j] == 4)
 					{
-						bullit[i][0] = bullit[i + 1][0];
-						bullit[i][1] = bullit[i + 1][1];
+						gotoxy(j, i);
+						printf(" ");
+						map[i][j] = 0;
+						if (map[i - 1][j] == 0)
+						{
+							map[i - 1][j] = 4;
+							gotoxy(j, i - 1);
+							printf("|");
+						}
 					}
-					bullit_top--;
-					i--;
 				}
 			}
 		}
