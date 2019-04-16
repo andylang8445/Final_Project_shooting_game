@@ -95,7 +95,7 @@ int main()
 			printf("\n");
 	}//printing screen end
 
-	while (break_check)//while loop where the actual game is operated
+	for (int count_sleep = 0; break_check; count_sleep++)//while loop where the actual game is operated
 	{
 		if (_kbhit())
 		{
@@ -159,28 +159,34 @@ int main()
 				printf("=A=");
 			}
 		}
-		for (int i = 0; i < bullit_top; i++)
+		if (count_sleep % 9 == 0)
 		{
-			gotoxy(bullit[i][0], bullit[i][1]);
-			printf(" ");
-
-			if (map[bullit[i][1]-1][bullit[i][0]] == 0)
+			//always move bullit forword
+			for (int i = 0; i < bullit_top; i++)
 			{
-				bullit[i][1]--;
 				gotoxy(bullit[i][0], bullit[i][1]);
-				printf("|");
-			}
-			else
-			{
-				for (int j = i + 1; j < bullit_top; j++)
+				printf(" ");
+
+				Sleep(1);
+
+				if (map[bullit[i][1] - 1][bullit[i][0]] == 0)
 				{
-					bullit[i][0] = bullit[i + 1][0];
-					bullit[i][1] = bullit[i + 1][1];
+					bullit[i][1]--;
+					gotoxy(bullit[i][0], bullit[i][1]);
+					printf("|");
 				}
-				bullit_top--;
-				i--;
+				else
+				{
+					for (int j = i + 1; j < bullit_top; j++)
+					{
+						bullit[i][0] = bullit[i + 1][0];
+						bullit[i][1] = bullit[i + 1][1];
+					}
+					bullit_top--;
+					i--;
+				}
 			}
 		}
-		Sleep(60);
+		Sleep(5);
 	}
 }
