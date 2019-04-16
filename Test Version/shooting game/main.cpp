@@ -20,6 +20,7 @@
 #define TY_origin 1
 #define PX_origin 55
 #define PY_origin 31
+#define original_kb_y 13
 int map[height][width],PX = PX_origin, PY = PY_origin;
 int previous_PX = PX, previous_PY = PY;
 int bullit[(height * width) - 3][2], bullit_top = 0;
@@ -65,18 +66,8 @@ void setting_screen()
 
 }
 
-
-int main()
+void map_print()
 {
-
-	bool trick_triger = false;
-	char kb_in;//contain the status of keyboard pressed
-
-	fff();//hide blinking cerser
-	system("title Shooting Game");//set the title of the screen
-	system("mode con cols=111 lines=35");//set the size of the screen
-	setting_screen();//set the map array
-
 	//printing screen start
 	for (int i = 0; i < height; i++)
 	{
@@ -90,16 +81,163 @@ int main()
 				printf("A");
 			else if (map[i][j] == 3)
 				printf("=");
+			else if (map[i][j] == 4)
+				printf("|");
 		}
-		if(i<height-1)
+		if (i < height - 1)
 			printf("\n");
 	}//printing screen end
+}
+
+int main()
+{
+
+	bool trick_triger = false;
+	char kb_in;//contain the status of keyboard pressed
+
+	fff();//hide blinking cerser
+	system("title Shooting Game");//set the title of the screen
+	system("mode con cols=111 lines=35");//set the size of the screen
+	setting_screen();//set the map array
+
+	map_print();//prints the map
 
 	for (int count_sleep = 0; break_check; count_sleep++)//while loop where the actual game is operated
 	{
 		if (_kbhit())
 		{
 			kb_in = _getch();
+			if (kb_in == 27)
+			{
+				int kb_x, kb_y;
+				for (int i = 0; i < 19; i++)
+				{
+					gotoxy(41, 7 + i);
+					if (i == 0 || i == 18)
+					{
+						for (int j = 0; j < 30; j++)
+						{
+							printf("#");
+						}
+					}
+					else
+					{
+						printf("##");
+						for (int j = 0; j < 26; j++)
+						{
+							printf(" ");
+						}
+						printf("##");
+					}
+				}
+				kb_x = 49;
+				kb_y = 13;
+
+				gotoxy(kb_x, kb_y);
+				printf("¢º");
+
+				gotoxy(52, 13);
+				printf("RESUME");
+
+				gotoxy(52, 15);
+				printf("RESTART");
+
+				gotoxy(52, 17);
+				printf("SETTINGS");
+
+				gotoxy(52, 19);
+				printf("END GAME");
+
+				bool kb_resume = false;
+				while (!kb_resume)
+				{
+					int kb_hit = _getch();
+					if (kb_hit == 'w')
+					{
+						gotoxy(kb_x, kb_y);
+						printf(" ");
+
+						if (kb_y != original_kb_y)
+							kb_y -= 2;
+						else
+							kb_y = 19;
+	
+						gotoxy(kb_x, kb_y);
+						printf("¢º");
+					}
+					else if (kb_hit == 's')
+					{
+						gotoxy(kb_x, kb_y);
+						printf(" ");
+
+						if (kb_y != 19)
+							kb_y += 2;
+						else
+							kb_y = original_kb_y;
+
+						gotoxy(kb_x, kb_y);
+						printf("¢º");
+					}
+					else if (kb_hit == 27)
+					{
+						system("cls");
+						map_print();
+						break;
+					}
+					else if (kb_hit == 13)
+					{
+						if (kb_y == original_kb_y)
+						{
+							system("cls");
+							map_print();
+							break;
+						}
+						else if (kb_y == original_kb_y + 2)
+						{
+							system("cls");
+							setting_screen();
+							map_print();
+							break;
+						}
+						else if (kb_y == original_kb_y + 4)
+						{
+							for (int i = 0; i < 19; i++)
+							{
+								gotoxy(41, 7 + i);
+								if (i == 0 || i == 18)
+								{
+									for (int j = 0; j < 30; j++)
+									{
+										printf("#");
+									}
+								}
+								else
+								{
+									printf("##");
+									for (int j = 0; j < 26; j++)
+									{
+										printf(" ");
+									}
+									printf("##");
+								}
+							}
+							gotoxy(50, original_kb_y + 3);
+							printf("COMING SOON");
+							Sleep(750);
+							system("cls");
+							map_print();
+							break;
+						}
+						else
+						{
+							return 0;
+						}
+
+					}
+				}
+				
+
+			}
 			if (kb_in == 'w')
 			{
 				if (PY > 1)
