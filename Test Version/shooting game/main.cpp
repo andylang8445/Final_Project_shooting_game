@@ -24,6 +24,7 @@
 int map[height][width],PX = PX_origin, PY = PY_origin;
 int previous_PX = PX, previous_PY = PY;
 int bullit[(height * width) - 3][2], bullit_top = 0;
+int enemy_cnt = 0;
 
 bool break_check = true;
 
@@ -65,7 +66,6 @@ void setting_screen()
 
 
 }
-
 void map_print()
 {
 	//printing screen start
@@ -87,6 +87,11 @@ void map_print()
 		if (i < height - 1)
 			printf("\n");
 	}//printing screen end
+}
+void enemay_creake()
+{
+
+	enemy_cnt++;
 }
 
 int main()
