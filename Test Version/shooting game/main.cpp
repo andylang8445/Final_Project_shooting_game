@@ -5,17 +5,15 @@
 #include<string.h>
 #include<time.h>
 #include<iostream>
-#define COL                   GetStdHandle(STD_OUTPUT_HANDLE)        // 콘솔창의 핸들정보 받기
-#define SKY_BLUE           SetConsoleTextAttribute(COL, 0x000b);        // 하늘색
-#define GREEN                SetConsoleTextAttribute(COL, 0x0002);        // 녹색
-#define YELLOW             SetConsoleTextAttribute(COL, 0x000e);        // 노란색
-#define RED                   SetConsoleTextAttribute(COL, 0x000c);        // 빨간색
+#define COL                   GetStdHandle(STD_OUTPUT_HANDLE)        // 콘솔창의 핸들정보 받기 Receieve console screen's handle information
+#define SKY_BLUE           SetConsoleTextAttribute(COL, 0x000b);        // 하늘색 Skyblue
+#define GREEN                SetConsoleTextAttribute(COL, 0x0002);        // 녹색 Green
+#define YELLOW             SetConsoleTextAttribute(COL, 0x000e);        // 노란색 Yellow
+#define RED                   SetConsoleTextAttribute(COL, 0x000c);        // 빨간색 Red
 #define ORIGINAL            SetConsoleTextAttribute(COL, 0x0007);        // 밝은 회색 (ORIGINAL CONSOLE COLOR)
-#define BLOOD               SetConsoleTextAttribute(COL, 0x0004);        // 검붉은색
+#define BLOOD               SetConsoleTextAttribute(COL, 0x0004);        // 검붉은색 Redish Black
 #define height 35
 #define width 111
-#define check_width PX+1==TX&&PY==TY||PX+2==TX&&PY==TY||PX+3==TX&&PY==TY||PX+4==TX&&PY==TY||PX==TX&&PY==TY||PX-4==TX&&PY==TY||PX-1==TX&&PY==TY||PX-2==TX&&PY==TY||PX-3==TX&&PY==TY||exPX+1==exTX&&exPY==exTY||exPX+2==exTX&&exPY==exTY||exPX+3==exTX&&exPY==exTY||exPX+4==exTX&&exPY==exTY||exPX==exTX&&exPY==exTY||exPX-4==exTX&&exPY==exTY||exPX-1==exTX&&exPY==exTY||exPX-2==exTX&&exPY==exTY||exPX-3==exTX&&exPY==exTY
-#define check_height PX==TX&&PY+1==TY||PX==TX&&PY+2==TY||PX==TX&&PY+3==TY||PX==TX&&PY-1==TY||PX==TX&&PY-2==TY||PX==TX&&PY-3==TY||exPX==exTX&&exPY+1==exTY||exPX==exTX&&exPY+2==exTY||exPX==exTX&&exPY+3==exTY||exPX==exTX&&exPY-1==exTY||exPX==exTX&&exPY-2==exTY||exPX==exTX&&exPY-3==exTY
 #define TX_origin 30
 #define TY_origin 1
 #define PX_origin 55
@@ -109,12 +107,15 @@ int main()
 
 	for (int count_sleep = 0; break_check; count_sleep++)//while loop where the actual game is operated
 	{
-		if (_kbhit())
+		if (_kbhit())//if the keyboard is pressed
 		{
-			kb_in = _getch();
-			if (kb_in == 27)
+			kb_in = _getch();//save the presse key
+			if (kb_in == 27)//if it's 'esc' key
 			{
+				//show the option tab and operate the selection
 				int kb_x, kb_y;
+
+				//Prints the outside of the option tab
 				for (int i = 0; i < 19; i++)
 				{
 					gotoxy(41, 7 + i);
@@ -135,6 +136,8 @@ int main()
 						printf("##");
 					}
 				}
+
+				//print the inside part of the option tab
 				kb_x = 49;
 				kb_y = 13;
 
@@ -154,6 +157,8 @@ int main()
 				printf("END GAME");
 
 				bool kb_resume = false;
+
+				//Operates the selection part of the option tab using 'w','s'
 				while (!kb_resume)
 				{
 					int kb_hit = _getch();
@@ -189,22 +194,22 @@ int main()
 						map_print();
 						break;
 					}
-					else if (kb_hit == 13)
+					else if (kb_hit == 13)//if the 'enter' is hit
 					{
-						if (kb_y == original_kb_y)
+						if (kb_y == original_kb_y)//Resume option
 						{
 							system("cls");
 							map_print();
 							break;
 						}
-						else if (kb_y == original_kb_y + 2)
+						else if (kb_y == original_kb_y + 2)//Restart option
 						{
 							system("cls");
 							setting_screen();
 							map_print();
 							break;
 						}
-						else if (kb_y == original_kb_y + 4)
+						else if (kb_y == original_kb_y + 4)//Setting option
 						{
 							for (int i = 0; i < 19; i++)
 							{
@@ -233,47 +238,47 @@ int main()
 							map_print();
 							break;
 						}
-						else
+						else//end the game
 						{
 							return 0;
 						}
 
-					}
-				}
+					}//enter hit ends
+				}//go to the result the player seleced
 				
 
-			}
-			if (kb_in == 'w')
+			}//end the option tab
+
+			if (kb_in == 'w')//if the pressed keyboard is 'w'
 			{
-				if (PY > 1)
+				if (PY > 1)//if the front of player unit if not wall
 				{
 					previous_PY = PY;
 					previous_PX = PX;
 					PY--;
 				}
-				
 			}
-			else if (kb_in == 's')
+			else if (kb_in == 's')//if the pressed keyboard is 'w'
 			{
-				if (PY < height - 2)
+				if (PY < height - 2)//if the back of player unit if not wall
 				{
 					previous_PY = PY;
 					previous_PX = PX;
 					PY++;
 				}
 			}
-			else if (kb_in == 'a')
+			else if (kb_in == 'a')//if the pressed keyboard is 'w'
 			{
-				if (PX > 2)
+				if (PX > 2)//if the left of player unit if not wall
 				{
 					previous_PY = PY;
 					previous_PX = PX;
 					PX--;
 				}
 			}
-			else if (kb_in == 'd')
+			else if (kb_in == 'd')//if the pressed keyboard is 'w'
 			{
-				if (PX < width - 3)
+				if (PX < width - 3)//if the right of player unit if not wall
 				{
 					previous_PY = PY;
 					previous_PX = PX;
@@ -281,39 +286,39 @@ int main()
 				}
 			}
 
-			if (previous_PX != PX || previous_PY != PY)
+			if (previous_PX != PX || previous_PY != PY)//if the player unit is moved
 			{
-				map[previous_PY][previous_PX - 1] = map[previous_PY][previous_PX] = map[previous_PY][previous_PX + 1] = 0;
-				gotoxy(previous_PX - 1, previous_PY);
-				printf("   ");
+				map[previous_PY][previous_PX - 1] = map[previous_PY][previous_PX] = map[previous_PY][previous_PX + 1] = 0;//erase the player unit from the array
+				gotoxy(previous_PX - 1, previous_PY);//move the cersur to player unit's previous location
+				printf("   ");//erase the player unit's previous location from the screen
 
-				map[PY][PX] = 2;
+				map[PY][PX] = 2;//mark the player unit to the array
 				map[PY][PX - 1] = map[PY][PX + 1] = 3;
-				gotoxy(PX - 1, PY);
-				printf("=A=");
+				gotoxy(PX - 1, PY);//move the cersur to player's current location
+				printf("=A=");//print the player unit on the screen
 			}
 
-			if (kb_in == 'l' && map[PY - 1][PX] == 0)
+			if (kb_in == 'l' && map[PY - 1][PX] == 0)//if the pressed key is 'l'
 			{
-				map[PY - 1][PX] = 4;
-				gotoxy(PX, PY - 1);
-				printf("|");
+				map[PY - 1][PX] = 4;//save the bullet to the array
+				gotoxy(PX, PY - 1);//move the cersur to the location where the bullet is fired
+				printf("|");//print the bullet on the screen
 
 			}
 		}
-		if (count_sleep % 9 == 0)
+		if (count_sleep % 8 == 0)//in certain amount of time
 		{
 			//always move bullit forword
 			for (int i = 0; i < height; i++)
 			{
 				for (int j = 0; j < width; j++)
 				{
-					if (map[i][j] == 4)
+					if (map[i][j] == 4)//find the bullet from the array
 					{
-						gotoxy(j, i);
-						printf(" ");
-						map[i][j] = 0;
-						if (map[i - 1][j] == 0)
+						gotoxy(j, i);//move to the bullet's location
+						printf(" ");//erase the bullet from the screen
+						map[i][j] = 0; //erase the bullet from the array
+						if (map[i - 1][j] == 0)//if the bullet's front is blank
 						{
 							map[i - 1][j] = 4;
 							gotoxy(j, i - 1);
@@ -323,6 +328,6 @@ int main()
 				}
 			}
 		}
-		Sleep(5);
+		Sleep(5);//give delay to operate the game properly that player can play
 	}
 }
