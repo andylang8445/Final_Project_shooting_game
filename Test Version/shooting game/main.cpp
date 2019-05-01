@@ -23,7 +23,14 @@ int map[height][width],PX = PX_origin, PY = PY_origin;
 int previous_PX = PX, previous_PY = PY;
 int bullit[(height * width) - 3][2], bullit_top = 0;
 int enemy_cnt = 0;
+typedef struct object {
+	int x, y;
+	int type;
+	int timer = 0;
+	bool print_status = false;
+};
 
+object enemy[128];
 bool break_check = true;
 
 void gotoxy(int xxx, int yyy)  //x,y순서로 입력, 커서 이동(배열 좌표아닌 실제 좌표) 
