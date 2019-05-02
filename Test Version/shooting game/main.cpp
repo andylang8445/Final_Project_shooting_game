@@ -23,9 +23,10 @@ int map[height][width],PX = PX_origin, PY = PY_origin;
 int previous_PX = PX, previous_PY = PY;
 int bullit[(height * width) - 3][2], bullit_top = 0;
 int enemy_cnt = 0;
+int level = 0;
 typedef struct object {
-	int x, y;
-	int type;
+	int x = 0, y = 0;
+	int type = 0;
 	int timer = 0;
 	bool print_status = false;
 };
@@ -95,8 +96,73 @@ void map_print()
 }
 void enemay_creake()
 {
+	int tmp_x, tmp_y;
+	for (int i = enemy_cnt; i < level; i++)
+	{
+		do {
+			tmp_x = (rand() % (width - 2)) + 1;
+			tmp_y = (rand() % (height - 2)) + 1;
 
-	enemy_cnt++;
+		} while (map[tmp_y][tmp_x] != 0);
+
+		map[tmp_y][tmp_x] = 5;
+
+		enemy_cnt++;
+	}
+}
+void move_enemy()
+{
+	for (int i = 0; i < enemy_cnt; i++)
+	{
+		if (rand()%16==5)
+		{
+			int tmp = rand() % 4;
+			if (tmp == 1 && map[enemy[i].y - 1][enemy[i].x] == 0)//move up
+			{
+				gotoxy(enemy[i].y, enemy[i].x);
+				printf(" ");
+				map[enemy[i].y][enemy[i].x] = 0;
+				enemy[i].y--;
+				gotoxy(enemy[i].y, enemy[i].x);
+				map[enemy[i].y][enemy[i].x] = 5;
+				printf("%");
+				enemy[i].print_status = true;
+			}
+			else if (tmp == 2 && map[enemy[i].y][enemy[i].x - 1] == 0)//move left
+			{
+				gotoxy(enemy[i].y, enemy[i].x);
+				printf(" ");
+				map[enemy[i].y][enemy[i].x] = 0;
+				enemy[i].x--;
+				gotoxy(enemy[i].y, enemy[i].x);
+				map[enemy[i].y][enemy[i].x] = 5;
+				printf("%");
+				enemy[i].print_status = true;
+			}
+			else if (tmp == 3 && map[enemy[i].y][enemy[i].x + 1] == 0)//move right
+			{
+				gotoxy(enemy[i].y, enemy[i].x);
+				printf(" ");
+				map[enemy[i].y][enemy[i].x] = 0;
+				enemy[i].x++;
+				gotoxy(enemy[i].y, enemy[i].x);
+				map[enemy[i].y][enemy[i].x] = 5;
+				printf("%");
+				enemy[i].print_status = true;
+			}
+			else if(map[enemy[i].y + 1][enemy[i].x] == 0)//move down
+			{
+				gotoxy(enemy[i].y, enemy[i].x);
+				printf(" ");
+				map[enemy[i].y][enemy[i].x] = 0;
+				enemy[i].y++;
+				gotoxy(enemy[i].y, enemy[i].x);
+				map[enemy[i].y][enemy[i].x] = 5;
+				printf("%");
+				enemy[i].print_status = true;
+			}
+		}
+	}
 }
 
 int main()
@@ -336,5 +402,6 @@ int main()
 			}
 		}
 		Sleep(5);//give delay to operate the game properly that player can play
+		break_check = true;
 	}
 }

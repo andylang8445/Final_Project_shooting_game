@@ -1,3 +1,1 @@
-﻿  main.cpp
-F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(31,25): warning C4838:  'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
-  shooting game.vcxproj -> F:\Final Project\Shooting_Game\Test Version\Debug\shooting game.exe
+﻿  shooting game.vcxproj -> F:\Final Project\Shooting_Game\Test Version\Debug\shooting game.exe
