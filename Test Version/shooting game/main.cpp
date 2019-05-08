@@ -24,6 +24,9 @@ int previous_PX = PX, previous_PY = PY;
 int bullit[(height * width) - 3][2], bullit_top = 0;
 int enemy_cnt = 0;
 int level = 0;
+
+const int Flag_Ranking_Disp_Position_x = 116, Flag_Ranking_Disp_Position_y = 4;
+
 typedef struct object {
 	int x = 0, y = 0;
 	int type = 0;
@@ -93,6 +96,11 @@ void map_print()
 		if (i < height - 1)
 			printf("\n");
 	}//printing screen end
+	for (int i = 1; i <= 5; i++)
+	{
+		gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + (i - 1) * 2);
+		printf("%d. Player1  %7d", i, 512 - 4 * (i - 1));
+	}
 }
 void enemay_creake()
 {
