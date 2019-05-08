@@ -1,1 +1,9 @@
-﻿  shooting game.vcxproj -> F:\Final Project\Shooting_Game\Test Version\Debug\shooting game.exe
+﻿  main.cpp
+F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(32,2): warning C4091:  'typedef ': 변수를 선언하지 않으면 'object' 왼쪽은 무시됩니다.
+F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(39,16): warning C4838:  'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(39,21): warning C4838:  'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(128,12): warning C4778:  'printf' : 서식 문자열 '%'이(가) 종결되지 않았습니다.
+F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(139,12): warning C4778:  'printf' : 서식 문자열 '%'이(가) 종결되지 않았습니다.
+F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(150,12): warning C4778:  'printf' : 서식 문자열 '%'이(가) 종결되지 않았습니다.
+F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(161,12): warning C4778:  'printf' : 서식 문자열 '%'이(가) 종결되지 않았습니다.
+  shooting game.vcxproj -> F:\Final Project\Shooting_Game\Test Version\Debug\shooting game.exe

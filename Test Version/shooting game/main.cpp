@@ -19,7 +19,7 @@
 #define PX_origin 55
 #define PY_origin 31
 #define original_kb_y 13
-int map[height][width],PX = PX_origin, PY = PY_origin;
+int map[height][width], PX = PX_origin, PY = PY_origin;
 int previous_PX = PX, previous_PY = PY;
 int bullit[(height * width) - 3][2], bullit_top = 0;
 int enemy_cnt = 0;
@@ -114,7 +114,7 @@ void move_enemy()
 {
 	for (int i = 0; i < enemy_cnt; i++)
 	{
-		if (rand()%16==5)
+		if (rand() % 16 == 5)
 		{
 			int tmp = rand() % 4;
 			if (tmp == 1 && map[enemy[i].y - 1][enemy[i].x] == 0)//move up
@@ -150,7 +150,7 @@ void move_enemy()
 				printf("%");
 				enemy[i].print_status = true;
 			}
-			else if(map[enemy[i].y + 1][enemy[i].x] == 0)//move down
+			else if (map[enemy[i].y + 1][enemy[i].x] == 0)//move down
 			{
 				gotoxy(enemy[i].y, enemy[i].x);
 				printf(" ");
@@ -173,7 +173,7 @@ int main()
 
 	fff();//hide blinking cerser
 	system("title Shooting Game");//set the title of the screen
-	system("mode con cols=111 lines=35");//set the size of the screen
+	system("mode con cols=140 lines=37");//set the size of the screen
 	setting_screen();//set the map array
 
 	map_print();//prints the map
@@ -244,7 +244,7 @@ int main()
 							kb_y -= 2;
 						else
 							kb_y = 19;
-	
+
 						gotoxy(kb_x, kb_y);
 						printf("¢º");
 					}
@@ -318,7 +318,7 @@ int main()
 
 					}//enter hit ends
 				}//go to the result the player seleced
-				
+
 
 			}//end the option tab
 
