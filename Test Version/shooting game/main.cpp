@@ -19,11 +19,16 @@
 #define PX_origin 55
 #define PY_origin 31
 #define original_kb_y 13
+#define score_per_enemy_5 5
+
 int map[height][width], PX = PX_origin, PY = PY_origin;
 int previous_PX = PX, previous_PY = PY;
 int bullit[(height * width) - 3][2], bullit_top = 0;
 int enemy_cnt = 0;
 int level = 0;
+int score = 0;
+bool score_change = false;
+int playerID_charactor;
 
 const int Flag_Ranking_Disp_Position_x = 116, Flag_Ranking_Disp_Position_y = 4;
 
@@ -92,12 +97,14 @@ void map_print()
 				printf("=");
 			else if (map[i][j] == 4)
 				printf("|");
+			else if (map[i][j] == 5)
+				printf("%%");
 		}
 		if (i < height - 1)
 			printf("\n");
 	}//printing game screen end
 
-	//print personalized/active information
+	//print logo
 	for (int i = 0; i < 7; i++)
 	{
 		YELLOW
@@ -161,6 +168,7 @@ void map_print()
 		ORIGINAL
 	}
 
+	//print personalized/active information
 	for (int i = 1; i <= 5; i++)
 	{
 		gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + 5 + (i - 1) * 2);
@@ -168,14 +176,17 @@ void map_print()
 	}
 
 	SKY_BLUE
-		gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + 20);
-	printf(" andylang8445: 516");
+	gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + 20);
+	printf(" andylang8445: %5d", score);
 	ORIGINAL
 }
-void enemay_creake()
+void enemay_creake(int level_enemy)
 {
 	int tmp_x = (rand() % (width - 5)) + 1;
-
+	for (int i = 0; i < level_enemy*2-1; i+=2)
+	{
+		map[1][tmp_x + i] = 5;
+	}
 }
 void move_enemy()
 {
@@ -193,7 +204,10 @@ int main()
 	system("mode con cols=140 lines=37");//set the size of the screen
 	setting_screen();//set the map array
 
+	enemay_creake(4);
 	map_print();//prints the map
+
+	playerID_charactor = 15;
 
 	for (int count_sleep = 0; break_check; count_sleep++)//while loop where the actual game is operated
 	{
@@ -414,9 +428,24 @@ int main()
 							gotoxy(j, i - 1);
 							printf("|");
 						}
+						else if (map[i - 1][j] == 5)
+						{
+							map[i - 1][j] = 0;
+							gotoxy(j, i - 1);
+							printf(" ");
+							score += score_per_enemy_5;
+							score_change = true;
+						}
 					}
 				}
 			}
+		}
+		if (score_change == true)
+		{
+			SKY_BLUE;
+			gotoxy(Flag_Ranking_Disp_Position_x + playerID_charactor, Flag_Ranking_Disp_Position_y + 20);
+			printf("%5d", score);
+			ORIGINAL;
 		}
 		Sleep(5);//give delay to operate the game properly that player can play
 		break_check = true;
