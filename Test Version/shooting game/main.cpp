@@ -95,82 +95,91 @@ void map_print()
 		}
 		if (i < height - 1)
 			printf("\n");
-	}//printing screen end
+	}//printing game screen end
+
+	//print personalized/active information
+	for (int i = 0; i < 7; i++)
+	{
+		YELLOW
+			gotoxy(width + 4, 1 + i);
+		if (i == 0 || i == 6)
+			printf("*********************");
+		
+		else
+		{
+			printf("*  ");
+			if (i == 1)
+			{
+				printf("###");
+				printf("    ");
+				printf("##");
+				printf("   ");
+				printf("###");
+				printf("  ");
+			}
+			else if (i == 2)
+			{
+				for (int j = 0; j < 5; j++)
+				{
+					printf("#  ");
+				}
+				printf("# ");
+			}
+			else if (i == 3)
+			{
+				printf("###");
+				printf("   ");
+				printf("#");
+				printf("  ");
+				printf("#");
+				printf("  ");
+				printf("###");
+				printf("  ");
+			}
+			else if (i == 4)
+			{
+				printf("#");
+				printf("     ");
+				printf("#");
+				printf("  ");
+				printf("#");
+				printf("  ");
+				printf("#");
+				printf("    ");
+			}
+			else
+			{
+				printf("#");
+				printf("      ");
+				printf("##");
+				printf("   ");
+				printf("#");
+				printf("    ");
+			}
+			printf("*");
+		}
+		ORIGINAL
+	}
+
 	for (int i = 1; i <= 5; i++)
 	{
-		gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + (i - 1) * 2);
+		gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + 5 + (i - 1) * 2);
 		printf("%d. Player1  %7d", i, 512 - 4 * (i - 1));
 	}
+
+	SKY_BLUE
+		gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + 20);
+	printf(" andylang8445: 516");
+	ORIGINAL
 }
 void enemay_creake()
 {
-	int tmp_x, tmp_y;
-	for (int i = enemy_cnt; i < level; i++)
-	{
-		do {
-			tmp_x = (rand() % (width - 2)) + 1;
-			tmp_y = (rand() % (height - 2)) + 1;
+	int tmp_x = (rand() % (width - 5)) + 1;
 
-		} while (map[tmp_y][tmp_x] != 0);
-
-		map[tmp_y][tmp_x] = 5;
-
-		enemy_cnt++;
-	}
 }
 void move_enemy()
 {
-	for (int i = 0; i < enemy_cnt; i++)
-	{
-		if (rand() % 16 == 5)
-		{
-			int tmp = rand() % 4;
-			if (tmp == 1 && map[enemy[i].y - 1][enemy[i].x] == 0)//move up
-			{
-				gotoxy(enemy[i].y, enemy[i].x);
-				printf(" ");
-				map[enemy[i].y][enemy[i].x] = 0;
-				enemy[i].y--;
-				gotoxy(enemy[i].y, enemy[i].x);
-				map[enemy[i].y][enemy[i].x] = 5;
-				printf("%");
-				enemy[i].print_status = true;
-			}
-			else if (tmp == 2 && map[enemy[i].y][enemy[i].x - 1] == 0)//move left
-			{
-				gotoxy(enemy[i].y, enemy[i].x);
-				printf(" ");
-				map[enemy[i].y][enemy[i].x] = 0;
-				enemy[i].x--;
-				gotoxy(enemy[i].y, enemy[i].x);
-				map[enemy[i].y][enemy[i].x] = 5;
-				printf("%");
-				enemy[i].print_status = true;
-			}
-			else if (tmp == 3 && map[enemy[i].y][enemy[i].x + 1] == 0)//move right
-			{
-				gotoxy(enemy[i].y, enemy[i].x);
-				printf(" ");
-				map[enemy[i].y][enemy[i].x] = 0;
-				enemy[i].x++;
-				gotoxy(enemy[i].y, enemy[i].x);
-				map[enemy[i].y][enemy[i].x] = 5;
-				printf("%");
-				enemy[i].print_status = true;
-			}
-			else if (map[enemy[i].y + 1][enemy[i].x] == 0)//move down
-			{
-				gotoxy(enemy[i].y, enemy[i].x);
-				printf(" ");
-				map[enemy[i].y][enemy[i].x] = 0;
-				enemy[i].y++;
-				gotoxy(enemy[i].y, enemy[i].x);
-				map[enemy[i].y][enemy[i].x] = 5;
-				printf("%");
-				enemy[i].print_status = true;
-			}
-		}
-	}
+	
 }
 
 int main()
