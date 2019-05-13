@@ -23,7 +23,6 @@
 
 int map[height][width], PX = PX_origin, PY = PY_origin;
 int previous_PX = PX, previous_PY = PY;
-int bullit[(height * width) - 3][2], bullit_top = 0;
 int enemy_cnt = 0;
 int level = 0;
 int score = 0;
@@ -32,12 +31,13 @@ int playerID_charactor;
 
 const int Flag_Ranking_Disp_Position_x = 116, Flag_Ranking_Disp_Position_y = 4;
 
-typedef struct object {
+typedef struct Obj{
 	int x = 0, y = 0;
+	int x_next = x, y_next = y;
 	int type = 0;
 	int timer = 0;
 	bool print_status = false;
-};
+}object;
 
 object enemy[128];
 bool break_check = true;
