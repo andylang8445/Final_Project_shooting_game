@@ -41,11 +41,14 @@ typedef struct Obj{
 }object;
 
 typedef struct E_B {
-
+	int type = -1;
+	int distance = -1;
+	int destination_x, destination_y;
 }Enemy_Bullet;
 
 object enemy[width][height];
 Enemy_Bullet EB[width][height];//@
+Enemy_Bullet Initial_Bullet;
 bool break_check = true;
 
 void gotoxy(int xxx, int yyy)  //x,y순서로 입력, 커서 이동(배열 좌표아닌 실제 좌표) 
@@ -208,7 +211,38 @@ void move_enemy()
 }
 void enemy_shoot()
 {
-
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			if (enemy[j][i].type == 5)
+			{
+				if (enemy[j][i].timer == 0)
+				{
+					EB[j][i + 1].type = 1;
+					EB[j][i + 1].destination_x = PX;
+					EB[j][i + 1].destination_y = PY;
+					EB[j][i + 1].distance = (PX - j) * (PX - j);
+					EB[j][i + 1].distance += (PY - i - 1) * (PY - i - 1);
+					EB[j][i + 1].distance = sqrt(EB[j][i + 1].distance);
+					gotoxy(j, i + 1);
+					printf("@");
+					enemy[j][i].print_status = type5timer;
+				}
+				else
+				{
+					enemy[j][i].timer--;
+				}
+			}
+		}
+	}
+}
+int get_distanace(int x1, int  x2, int  y1, int  y2)
+{
+	int distance = (x1 - x2) * (x1 - x2);
+	distance += (y1 - y2) * (y1 - y2);
+	distance = sqrt(distance);
+	return distance;
 }
 
 int main()
@@ -461,8 +495,54 @@ int main()
 							printf("|");
 						}
 					}
+					if (EB[j][i].type == 1)
+					{
+						int minimum_distance = 99999;
+						int x_apply, y_apply;
+						x_apply = j;
+						y_apply = i;
+						for (int addon_x = -1; addon_x <= 1; addon_x++)
+						{
+							for (int addon_y = -1; addon_y <= 1; addon_y++)
+							{
+								if (get_distanace(x_apply + addon_x, EB[j][i].destination_x, y_apply + addon_y, EB[j][i].destination_y) < minimum_distance)
+								{
+									x_apply += addon_x;
+									y_apply += addon_y;
+									minimum_distance = get_distanace(j + 1, EB[j][i].destination_x, i, EB[j][i].destination_y);
+								}
+							}
+						}
+						gotoxy(j + 1, i + 1);
+						printf(" ");
+						if (map[y_apply][x_apply] == 1);
+						else if (y_apply == PY && x_apply == PX)
+						{
+							gotoxy(x_apply - 1, y_apply);
+							printf("   ");
+						}
+						else if (y_apply == PY && x_apply == PX - 1)
+						{
+							gotoxy(x_apply, y_apply);
+							printf("   ");
+						}
+						else if (y_apply == PY && x_apply == PX + 1)
+						{
+							gotoxy(x_apply - 2, y_apply);
+							printf("   ");
+						}
+						else
+						{
+							gotoxy(x_apply, y_apply);
+							printf("@");
+						}
+						EB[x_apply][y_apply] = EB[j][i];
+						EB[x_apply][y_apply].distance = get_distanace(x_apply, EB[j][i].destination_x, y_apply, EB[j][i].destination_y);
+						EB[j][i] = Initial_Bullet;
+					}
 				}
 			}
+			enemy_shoot();
 		}
 		if (score_change == true)
 		{
