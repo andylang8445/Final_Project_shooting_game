@@ -20,6 +20,7 @@
 #define PY_origin 31
 #define original_kb_y 13
 #define score_per_enemy_5 5
+#define type5timer 32
 
 int map[height][width], PX = PX_origin, PY = PY_origin;
 int previous_PX = PX, previous_PY = PY;
@@ -39,7 +40,12 @@ typedef struct Obj{
 	bool print_status = false;
 }object;
 
-object enemy[128];
+typedef struct E_B {
+
+}Enemy_Bullet;
+
+object enemy[width][height];
+Enemy_Bullet EB[width][height];//@
 bool break_check = true;
 
 void gotoxy(int xxx, int yyy)  //x,y순서로 입력, 커서 이동(배열 좌표아닌 실제 좌표) 
@@ -99,6 +105,8 @@ void map_print()
 				printf("|");
 			else if (map[i][j] == 5)
 				printf("%%");
+
+			enemy[j][i].type = 0;
 		}
 		if (i < height - 1)
 			printf("\n");
@@ -183,16 +191,24 @@ void map_print()
 void enemay_creake(int level_enemy)
 {
 	int tmp_x = (rand() % (width - 5)) + 1;
-	for (int i = 0; i < level_enemy*2-1; i+=2)
+	for (int i = 0; i < level_enemy; i++)
 	{
-		map[1][tmp_x + i] = 5;
-		gotoxy(tmp_x + i, 1);
+		tmp_x = (rand() % (width - 5)) + 1;
+		if (enemy[tmp_x][i].type == 5)
+			i--;
+		enemy[tmp_x][1].type = 5;
+		//enemy[tmp_x][1].timer = type5timer;
+		gotoxy(tmp_x, 1);
 		printf("%%");
 	}
 }
 void move_enemy()
 {
 	
+}
+void enemy_shoot()
+{
+
 }
 
 int main()
@@ -357,7 +373,7 @@ int main()
 
 			if (kb_in == 'w')//if the pressed keyboard is 'w'
 			{
-				if (PY > 1)//if the front of player unit if not wall
+				if (PY > (height/2))//if the front of player unit if not wall
 				{
 					previous_PY = PY;
 					previous_PX = PX;
@@ -429,20 +445,20 @@ int main()
 						gotoxy(j, i);//move to the bullet's location
 						printf(" ");//erase the bullet from the screen
 						map[i][j] = 0; //erase the bullet from the array
-						if (map[i - 1][j] == 0)//if the bullet's front is blank
+						if (enemy[j][i - 1].type == 5)
 						{
-							map[i - 1][j] = 4;
-							gotoxy(j, i - 1);
-							printf("|");
-						}
-						else if (map[i - 1][j] == 5)
-						{
-							map[i - 1][j] = 0;
+							enemy[j][i - 1].type = 0;
 							gotoxy(j, i - 1);
 							printf(" ");
 							score += score_per_enemy_5;
 							score_change = true;
 							enemy_cnt--;
+						}
+						else if (map[i - 1][j] == 0)//if the bullet's front is blank
+						{
+							map[i - 1][j] = 4;
+							gotoxy(j, i - 1);
+							printf("|");
 						}
 					}
 				}
