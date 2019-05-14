@@ -186,6 +186,8 @@ void enemay_creake(int level_enemy)
 	for (int i = 0; i < level_enemy*2-1; i+=2)
 	{
 		map[1][tmp_x + i] = 5;
+		gotoxy(tmp_x + i, 1);
+		printf("%%");
 	}
 }
 void move_enemy()
@@ -195,6 +197,7 @@ void move_enemy()
 
 int main()
 {
+	srand(time(NULL));
 
 	bool trick_triger = false;
 	char kb_in;//contain the status of keyboard pressed
@@ -204,12 +207,11 @@ int main()
 	system("mode con cols=140 lines=37");//set the size of the screen
 	setting_screen();//set the map array
 
-	enemay_creake(4);
 	map_print();//prints the map
 
 	playerID_charactor = 15;
 
-	for (int count_sleep = 0; break_check; count_sleep++)//while loop where the actual game is operated
+	for (long long int count_sleep = 0; break_check; count_sleep++)//while loop where the actual game is operated
 	{
 		if (_kbhit())//if the keyboard is pressed
 		{
@@ -410,6 +412,11 @@ int main()
 
 			}
 		}
+		if (enemy_cnt == 0)
+		{
+			enemay_creake(4);
+			enemy_cnt += 4;
+		}
 		if (count_sleep % 8 == 0)//in certain amount of time
 		{
 			//always move bullit forword
@@ -435,6 +442,7 @@ int main()
 							printf(" ");
 							score += score_per_enemy_5;
 							score_change = true;
+							enemy_cnt--;
 						}
 					}
 				}
