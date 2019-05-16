@@ -20,7 +20,8 @@
 #define PY_origin 31
 #define original_kb_y 13
 #define score_per_enemy_5 5
-#define type5timer 32
+#define type5timer 320
+#define type5bandwidth 8000
 
 int map[height][width], PX = PX_origin, PY = PY_origin;
 int previous_PX = PX, previous_PY = PY;
@@ -196,8 +197,8 @@ void enemay_creake(int level_enemy)
 	int tmp_x = (rand() % (width - 5)) + 1;
 	for (int i = 0; i < level_enemy; i++)
 	{
-		tmp_x = (rand() % (width - 5)) + 1;
-		if (enemy[tmp_x][i].type == 5)
+		tmp_x = (rand() % (width - 4)) + 2;
+		if (enemy[tmp_x][1].type == 5)
 			i--;
 		enemy[tmp_x][1].type = 5;
 		//enemy[tmp_x][1].timer = type5timer;
@@ -208,34 +209,6 @@ void enemay_creake(int level_enemy)
 void move_enemy()
 {
 	
-}
-void enemy_shoot()
-{
-	for (int i = 0; i < height; i++)
-	{
-		for (int j = 0; j < width; j++)
-		{
-			if (enemy[j][i].type == 5)
-			{
-				if (enemy[j][i].timer == 0)
-				{
-					EB[j][i + 1].type = 1;
-					EB[j][i + 1].destination_x = PX;
-					EB[j][i + 1].destination_y = PY;
-					EB[j][i + 1].distance = (PX - j) * (PX - j);
-					EB[j][i + 1].distance += (PY - i - 1) * (PY - i - 1);
-					EB[j][i + 1].distance = sqrt(EB[j][i + 1].distance);
-					gotoxy(j, i + 1);
-					printf("@");
-					enemy[j][i].print_status = type5timer;
-				}
-				else
-				{
-					enemy[j][i].timer--;
-				}
-			}
-		}
-	}
 }
 int get_distanace(int x1, int  x2, int  y1, int  y2)
 {
@@ -407,11 +380,15 @@ int main()
 
 			if (kb_in == 'w')//if the pressed keyboard is 'w'
 			{
-				if (PY > (height/2))//if the front of player unit if not wall
+				if (PY > (3 * height / 7))//if the front of player unit if not wall
 				{
 					previous_PY = PY;
 					previous_PX = PX;
 					PY--;
+				}
+				else if (PY == (3 * height / 7))
+				{
+					Beep(512, 2);
 				}
 			}
 			else if (kb_in == 's')//if the pressed keyboard is 'w'
@@ -487,6 +464,7 @@ int main()
 							score += score_per_enemy_5;
 							score_change = true;
 							enemy_cnt--;
+							Beep(812, 2);
 						}
 						else if (map[i - 1][j] == 0)//if the bullet's front is blank
 						{
@@ -495,54 +473,20 @@ int main()
 							printf("|");
 						}
 					}
-					if (EB[j][i].type == 1)
+
+					if (map[i][j] > type5bandwidth && map[i][j] <= type5bandwidth+type5timer)
 					{
-						int minimum_distance = 99999;
-						int x_apply, y_apply;
-						x_apply = j;
-						y_apply = i;
-						for (int addon_x = -1; addon_x <= 1; addon_x++)
-						{
-							for (int addon_y = -1; addon_y <= 1; addon_y++)
-							{
-								if (get_distanace(x_apply + addon_x, EB[j][i].destination_x, y_apply + addon_y, EB[j][i].destination_y) < minimum_distance)
-								{
-									x_apply += addon_x;
-									y_apply += addon_y;
-									minimum_distance = get_distanace(j + 1, EB[j][i].destination_x, i, EB[j][i].destination_y);
-								}
-							}
-						}
-						gotoxy(j + 1, i + 1);
+						//find the course
+						map[i][j]--;
+					}
+					if (type5bandwidth == map[i][j])
+					{
+						map[i][j] = 0;
+						gotoxy(j, i);
 						printf(" ");
-						if (map[y_apply][x_apply] == 1);
-						else if (y_apply == PY && x_apply == PX)
-						{
-							gotoxy(x_apply - 1, y_apply);
-							printf("   ");
-						}
-						else if (y_apply == PY && x_apply == PX - 1)
-						{
-							gotoxy(x_apply, y_apply);
-							printf("   ");
-						}
-						else if (y_apply == PY && x_apply == PX + 1)
-						{
-							gotoxy(x_apply - 2, y_apply);
-							printf("   ");
-						}
-						else
-						{
-							gotoxy(x_apply, y_apply);
-							printf("@");
-						}
-						EB[x_apply][y_apply] = EB[j][i];
-						EB[x_apply][y_apply].distance = get_distanace(x_apply, EB[j][i].destination_x, y_apply, EB[j][i].destination_y);
-						EB[j][i] = Initial_Bullet;
 					}
 				}
 			}
-			enemy_shoot();
 		}
 		if (score_change == true)
 		{
