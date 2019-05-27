@@ -476,38 +476,22 @@ int main()
 
 					if (map[i][j] > type5bandwidth && map[i][j] <= type5bandwidth+type5timer)
 					{
-						//find the course
-						int min_dist = 9999999;
-						int x_addon = 0, y_addon = 0;
-						for (int x_add = -1; x_add < 1; x_add++)
-						{
-							for (int y_add = 0; y_add < 1; y_add++)
-							{
-								if (get_distanace(j, x_add + j, i, i + y_add) < min_dist && map[i + y_add][j + x_add] == 0)
-								{
-									min_dist = get_distanace(j, x_add + j, i, i + y_add);
-									x_addon = x_add;
-									y_addon = y_add;
-								}
-							}
-						}
-						map[i + y_addon][j + x_addon] = map[i][j] - 1;
-						gotoxy(j + x_addon, i + y_addon);
-						printf("@");
-						map[i][j] = 0;
-						gotoxy(j, i);
-						printf(" ");
-						map[i][j]--;
+						//move enemy bullet
+						
 					}
 					if (type5bandwidth == map[i][j])
 					{
+						//bullet moving time over
 						map[i][j] = 0;
 						gotoxy(j, i);
 						printf(" ");
 					}
 					if (enemy[j][i].type == 5 && enemy[j][i].timer == 0)
 					{
-
+						//enemy shoots the bullet
+						map[i + 1][j] = type5bandwidth + type5timer;
+						gotoxy(j, i + 1);
+						printf("@");
 					}
 				}
 			}
