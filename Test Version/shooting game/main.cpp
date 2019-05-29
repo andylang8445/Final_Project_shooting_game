@@ -19,15 +19,18 @@
 #define PX_origin 55
 #define PY_origin 31
 #define original_kb_y 13
-#define score_per_enemy_5 5
-#define type5timer 320
+#define score_per_enemy_5 15
+#define type5timer 32
 #define type5bandwidth 8000
+#define minus_score_per_enemy_5 8
+#define PlayerInitialHealthGauge 3
 
 int map[height][width], PX = PX_origin, PY = PY_origin;
 int previous_PX = PX, previous_PY = PY;
 int enemy_cnt = 0;
 int level = 0;
 int score = 0;
+int player_health_gauge = PlayerInitialHealthGauge;
 bool score_change = false;
 int playerID_charactor;
 
@@ -209,6 +212,43 @@ void enemay_creake(int level_enemy)
 void move_enemy()
 {
 	
+}
+void clear_bullets()
+{
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			if (map[i][j] == 4 || (map[i][j] > type5bandwidth && map[i][j] <= type5bandwidth + type5timer))
+			{
+				map[i][j] = 0;
+				gotoxy(j, i);
+				printf(" ");
+			}
+		}
+	}
+}
+void Blink_Player(int blink_num)
+{
+	for (int i = 0; i < blink_num; i++)
+	{
+		gotoxy(PX - 1, PY);
+		printf("   ");
+		Sleep(50);
+		gotoxy(PX - 1, PY);
+		printf("=A=");
+		Sleep(50);
+	}
+	gotoxy(PX - 1, PY);
+	printf("   ");
+	map[PY][PX] = map[PY][PX + 1] = map[PY][PX - 1] = 0;
+	map[PY_origin][PX_origin] = 2;//2 represents the symbol 'A'
+	map[PY_origin][PX_origin - 1] = map[PY_origin][PX_origin + 1] = 3;//3 represents the symbol '=', part of player icon
+	PX = PX_origin;
+	PY = PY_origin;
+	gotoxy(PX - 1, PY);
+	printf("=A=");
+	clear_bullets();
 }
 int get_distanace(int x1, int  x2, int  y1, int  y2)
 {
@@ -399,6 +439,8 @@ int main()
 					previous_PX = PX;
 					PY++;
 				}
+				else
+					Beep(512, 2);
 			}
 			else if (kb_in == 'a')//if the pressed keyboard is 'w'
 			{
@@ -408,6 +450,8 @@ int main()
 					previous_PX = PX;
 					PX--;
 				}
+				else
+					Beep(512, 2);
 			}
 			else if (kb_in == 'd')//if the pressed keyboard is 'w'
 			{
@@ -417,6 +461,8 @@ int main()
 					previous_PX = PX;
 					PX++;
 				}
+				else
+					Beep(512, 2);
 			}
 
 			if (previous_PX != PX || previous_PY != PY)//if the player unit is moved
@@ -433,6 +479,7 @@ int main()
 
 			if (kb_in == 'l' && map[PY - 1][PX] == 0)//if the pressed key is 'l'
 			{
+				Beep(1512, 2);
 				map[PY - 1][PX] = 4;//save the bullet to the array
 				gotoxy(PX, PY - 1);//move the cersur to the location where the bullet is fired
 				printf("|");//print the bullet on the screen
@@ -473,11 +520,50 @@ int main()
 							printf("|");
 						}
 					}
+				}
+			}
+		}
+		if (count_sleep % 16 == 0)
+		{
 
-					if (map[i][j] > type5bandwidth && map[i][j] <= type5bandwidth+type5timer)
+			for (int i = height - 1; i >= 0; i--)
+			{
+				for (int j = 0; j < width; j++)
+				{
+					if (map[i][j] > type5bandwidth && map[i][j] <= type5bandwidth + type5timer)
 					{
 						//move enemy bullet
-						
+						gotoxy(j, i);
+						printf(" ");
+
+						if (map[i + 1][j] == 0)
+						{
+							map[i + 1][j] = map[i][j] - 1;
+							gotoxy(j, i + 1);
+							printf("@");
+						}
+						else if (map[i + 1][j] == 2 || map[i + 1][j] == 3)
+						{
+							//Player Hit
+							Beep(1106, 5);
+							player_health_gauge--;
+							if (score - minus_score_per_enemy_5 >= 0)
+								score -= minus_score_per_enemy_5;
+							if (map[i + 1][j] == 2)
+							{
+								if (map[i + 1][j + 1] == 3)
+								{
+									Blink_Player(3);
+								}
+								else
+									Blink_Player(3);
+							}
+							else
+								Blink_Player(3);
+							
+						}
+						map[i][j] = 0;
+
 					}
 					if (type5bandwidth == map[i][j])
 					{
@@ -486,12 +572,17 @@ int main()
 						gotoxy(j, i);
 						printf(" ");
 					}
-					if (enemy[j][i].type == 5 && enemy[j][i].timer == 0)
+					if (enemy[j][i].type == 5 && enemy[j][i].timer == 0 && rand() % 6 == 0)
 					{
-						//enemy shoots the bullet
+						//enemy shoots the bulletdss
 						map[i + 1][j] = type5bandwidth + type5timer;
 						gotoxy(j, i + 1);
 						printf("@");
+						enemy[j][i].timer = type5timer;
+					}
+					else if (enemy[j][i].type == 5 && enemy[j][i].timer > 0)
+					{
+						enemy[j][i].timer--;
 					}
 				}
 			}
