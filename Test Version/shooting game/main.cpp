@@ -33,6 +33,7 @@ int score = 0;
 int player_health_gauge = PlayerInitialHealthGauge;
 bool score_change = false;
 int playerID_charactor;
+long long int count_sleep = 0;
 
 const int Flag_Ranking_Disp_Position_x = 116, Flag_Ranking_Disp_Position_y = 4;
 
@@ -88,19 +89,31 @@ void setting_screen()
 			map[i][width - 1] = 1;
 		}
 	}
-	map[PY_origin][PX_origin] = 2;//2 represents the symbol 'A'
-	map[PY_origin][PX_origin - 1] = map[PY_origin][PX_origin + 1] = 3;//3 represents the symbol '=', part of player icon
-
+	PY = PY_origin;
+	PX = PX_origin;
+	map[PY][PX] = 2;//2 represents the symbol 'A'
+	map[PY][PX - 1] = map[PY][PX + 1] = 3;//3 represents the symbol '=', part of player icon
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			enemy[j][i].type = 0;
+		}
+	}
 
 }
 void map_print()
 {
 	//printing screen start
+	if (count_sleep == 0)
+	{
+		//map[PY][PX - 1] = map[PY][PX] = map[PY][PX + 1] = 0;
+	}
 	for (int i = 0; i < height; i++)
 	{
 		for (int j = 0; j < width; j++)
 		{
-			if (map[i][j] == 0)
+			if (map[i][j] == 0 && enemy[j][i].type == 0)
 				printf(" ");
 			else if (map[i][j] == 1)
 				printf("*");
@@ -112,8 +125,10 @@ void map_print()
 				printf("|");
 			else if (map[i][j] == 5)
 				printf("%%");
-
-			enemy[j][i].type = 0;
+			else if (map[i][j] >= type5bandwidth && map[i][j] <= type5bandwidth + type5timer)
+				printf("@");
+			else if (enemy[j][i].type == 5)
+				printf("%%");
 		}
 		if (i < height - 1)
 			printf("\n");
@@ -274,7 +289,7 @@ int main()
 
 	playerID_charactor = 15;
 
-	for (long long int count_sleep = 0; break_check; count_sleep++)//while loop where the actual game is operated
+	for (count_sleep = 0; break_check; count_sleep++)//while loop where the actual game is operated
 	{
 		if (_kbhit())//if the keyboard is pressed
 		{
@@ -375,7 +390,9 @@ int main()
 						{
 							system("cls");
 							setting_screen();
+							enemy_cnt = 0;
 							map_print();
+							count_sleep = 0;
 							break;
 						}
 						else if (kb_y == original_kb_y + 4)//Setting option
