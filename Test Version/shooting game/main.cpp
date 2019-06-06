@@ -24,6 +24,8 @@
 #define type5bandwidth 8000
 #define minus_score_per_enemy_5 8
 #define PlayerInitialHealthGauge 3
+#define HX 88
+#define HY 35
 
 int map[height][width], PX = PX_origin, PY = PY_origin;
 int previous_PX = PX, previous_PY = PY;
@@ -60,6 +62,27 @@ void gotoxy(int xxx, int yyy)  //x,y순서로 입력, 커서 이동(배열 좌표아닌 실제 좌
 {
 	COORD pos = { xxx, yyy };
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
+}
+void health_dsp()
+{
+	gotoxy(HX,HY);
+	RED;
+	for(int i=0;i<player_health_gauge;i++)
+		printf("♥");
+	ORIGINAL;
+}
+void lose_health_gague()
+{
+	player_health_gauge--;
+	gotoxy(HX + 2 * player_health_gauge, HY);
+	printf(" ");
+	if (player_health_gauge == 0)
+	{
+		gotoxy(HX, HY);
+		RED;
+		printf("Last Chance");
+		ORIGINAL;
+	}
 }
 void fff(void)
 {
@@ -272,6 +295,46 @@ int get_distanace(int x1, int  x2, int  y1, int  y2)
 	distance = sqrt(distance);
 	return distance;
 }
+void clear_enemy()
+{
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			if (enemy[j][i].type == 5)
+			{
+				gotoxy(j, i);
+				printf(" ");
+				enemy[j][i].type = 0;
+			}
+		}
+	}
+}
+void clear_screen()
+{
+	for (int i = 1; i < height - 1; i++)
+	{
+		gotoxy(1, i);
+		for (int j = 1; j < width - 1; j++)
+		{
+			printf(" ");
+		}
+	}
+
+}
+int game_over()
+{
+	clear_bullets();
+	clear_enemy();
+	clear_screen();
+	gotoxy(50, 18);
+	RED;
+	printf("GAME");
+	SKY_BLUE;
+	printf(" OVER");
+	ORIGINAL;
+	return 0;
+}
 
 int main()
 {
@@ -286,6 +349,7 @@ int main()
 	setting_screen();//set the map array
 
 	map_print();//prints the map
+	health_dsp();
 
 	playerID_charactor = 15;
 
@@ -417,15 +481,74 @@ int main()
 									printf("##");
 								}
 							}
-							gotoxy(50, original_kb_y + 3);
-							printf("COMING SOON");
-							Sleep(750);
-							system("cls");
-							map_print();
-							break;
+							int nkb_x = 49;
+							int nkb_y = 13;
+							gotoxy(nkb_x, nkb_y);
+							printf("▶");
+
+							gotoxy(52, 13);
+							printf("THEME COLOUR");
+							gotoxy(52, 15);
+							printf("CHANGE LEVEL");
+							gotoxy(52, 17);
+							printf("PLAYER COLOUR");
+							gotoxy(52, 19);
+							printf("USER MANUAL");
+							while (!kb_resume)
+							{
+								int nkb_hit = _getch();
+								if (nkb_hit == 'w')
+								{
+									gotoxy(nkb_x, nkb_y);
+									printf(" ");
+
+									if (nkb_y != original_kb_y)
+										nkb_y -= 2;
+									else
+										nkb_y = 19;
+
+									gotoxy(nkb_x, nkb_y);
+									printf("▶");
+								}
+								else if (nkb_hit == 's')
+								{
+									gotoxy(nkb_x, nkb_y);
+									printf(" ");
+
+									if (nkb_y != 19)
+										nkb_y += 2;
+									else
+										nkb_y = original_kb_y;
+
+									gotoxy(nkb_x, nkb_y);
+									printf("▶");
+								}
+								else if (nkb_hit == 27)//esc
+								{
+									gotoxy(nkb_x, nkb_y);
+									printf(" ");
+									break;
+								}
+								else if (nkb_hit == 13)//if the 'enter' is hit
+								{
+
+								}
+							}
+							gotoxy(kb_x, kb_y);
+							printf("▶");
+
+							gotoxy(52, 13);
+							printf("RESUME      ");
+							gotoxy(52, 15);
+							printf("RESTART     ");
+							gotoxy(52, 17);
+							printf("SETTINGS     ");
+							gotoxy(52, 19);
+							printf("END GAME   ");
 						}
 						else//end the game
 						{
+							game_over();
 							return 0;
 						}
 
@@ -536,6 +659,12 @@ int main()
 							gotoxy(j, i - 1);
 							printf("|");
 						}
+						else if (map[i - 1][j] > type5bandwidth && map[i - 1][j] <= type5bandwidth + type5timer)
+						{
+							map[i - 1][j] = 0;
+							gotoxy(j, i - 1);
+							printf(" ");
+						}
 					}
 				}
 			}
@@ -563,7 +692,7 @@ int main()
 						{
 							//Player Hit
 							Beep(1106, 5);
-							player_health_gauge--;
+							lose_health_gague();
 							if (score - minus_score_per_enemy_5 >= 0)
 								score -= minus_score_per_enemy_5;
 							if (map[i + 1][j] == 2)
@@ -591,11 +720,20 @@ int main()
 					}
 					if (enemy[j][i].type == 5 && enemy[j][i].timer == 0 && rand() % 6 == 0)
 					{
-						//enemy shoots the bulletdss
-						map[i + 1][j] = type5bandwidth + type5timer;
-						gotoxy(j, i + 1);
-						printf("@");
-						enemy[j][i].timer = type5timer;
+						if (map[i + 1][j] == 4)
+						{
+							map[i + 1][j] = 0;
+							gotoxy(j, i + 1);
+							printf(" ");
+						}
+						else if (map[i + 1][j] == 0)
+						{
+							//enemy shoots the bulletdss
+							map[i + 1][j] = type5bandwidth + type5timer;
+							gotoxy(j, i + 1);
+							printf("@");
+							enemy[j][i].timer = type5timer;
+						}
 					}
 					else if (enemy[j][i].type == 5 && enemy[j][i].timer > 0)
 					{
