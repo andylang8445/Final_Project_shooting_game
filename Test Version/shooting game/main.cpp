@@ -34,6 +34,7 @@ int level = 0;
 int score = 0;
 int player_health_gauge = PlayerInitialHealthGauge;
 bool score_change = false;
+bool break_game_trigger = false;
 int playerID_charactor;
 long long int count_sleep = 0;
 
@@ -70,19 +71,6 @@ void health_dsp()
 	for(int i=0;i<player_health_gauge;i++)
 		printf("¢¾");
 	ORIGINAL;
-}
-void lose_health_gague()
-{
-	player_health_gauge--;
-	gotoxy(HX + 2 * player_health_gauge, HY);
-	printf(" ");
-	if (player_health_gauge == 0)
-	{
-		gotoxy(HX, HY);
-		RED;
-		printf("Last Chance");
-		ORIGINAL;
-	}
 }
 void fff(void)
 {
@@ -322,6 +310,12 @@ void clear_screen()
 	}
 
 }
+void clear_player()
+{
+	gotoxy(PX, PY);
+	printf("   ");
+	map[PX][PY] = map[PX + 1][PY] = map[PX + 2][PY] = 0;
+}
 int game_over()
 {
 	clear_bullets();
@@ -333,7 +327,22 @@ int game_over()
 	SKY_BLUE;
 	printf(" OVER");
 	ORIGINAL;
+	clear_player();
 	return 0;
+}
+void lose_health_gague()
+{
+	player_health_gauge--;
+	gotoxy(HX + 2 * player_health_gauge, HY);
+	printf(" ");
+	if (player_health_gauge == 0)
+	{
+		game_over();
+		_getch();
+		system("cls");
+		map_print();
+		break_game_trigger = true;
+	}
 }
 
 int main()
@@ -355,6 +364,8 @@ int main()
 
 	for (count_sleep = 0; break_check; count_sleep++)//while loop where the actual game is operated
 	{
+		if (break_game_trigger == true)
+			break;
 		if (_kbhit())//if the keyboard is pressed
 		{
 			kb_in = _getch();//save the presse key
@@ -549,14 +560,21 @@ int main()
 						else//end the game
 						{
 							game_over();
-							return 0;
+							_getch();
+							system("cls");
+							map_print();
+							break_game_trigger = true;
+							break;
 						}
 
 					}//enter hit ends
 				}//go to the result the player seleced
 
-
 			}//end the option tab
+
+
+			if (break_game_trigger == true)
+				break;
 
 			if (kb_in == 'w')//if the pressed keyboard is 'w'
 			{
@@ -730,6 +748,7 @@ int main()
 						{
 							//enemy shoots the bulletdss
 							map[i + 1][j] = type5bandwidth + type5timer;
+							Beep(1551, 2);
 							gotoxy(j, i + 1);
 							printf("@");
 							enemy[j][i].timer = type5timer;
@@ -752,4 +771,9 @@ int main()
 		Sleep(5);//give delay to operate the game properly that player can play
 		break_check = true;
 	}
+	system("cls");
+	gotoxy(width/2, height/2);
+	RED;
+	printf("Thank you for playing!");
+	while (1);
 }
