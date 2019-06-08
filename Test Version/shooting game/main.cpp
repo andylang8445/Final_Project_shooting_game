@@ -35,8 +35,13 @@ int score = 0;
 int player_health_gauge = PlayerInitialHealthGauge;
 bool score_change = false;
 bool break_game_trigger = false;
+bool konami_activated = false;
 int playerID_charactor;
 long long int count_sleep = 0;
+int str_cmp_k_code = -1;
+char konami_code_detect[11];
+char konami_answer[11] = {"wwssadadba"};
+int K_code_cnt = 0;
 
 const int Flag_Ranking_Disp_Position_x = 116, Flag_Ranking_Disp_Position_y = 4;
 
@@ -369,6 +374,71 @@ int main()
 		if (_kbhit())//if the keyboard is pressed
 		{
 			kb_in = _getch();//save the presse key
+
+			//detect konami code start
+			if (K_code_cnt <= 10)
+			{
+				konami_code_detect[K_code_cnt] = kb_in;
+				K_code_cnt++;
+				/*gotoxy(HX - 55, HY);
+				for (int i = 0; i < 10; i++)
+					printf("%c", konami_answer[i]);
+				gotoxy(HX - 25, HY);
+				for (int i = 0; i < 10; i++)
+					printf("%c", konami_code_detect[i]);
+				printf("  %d", strcmp(konami_answer, konami_code_detect));*/
+			}
+			else
+			{
+				for (int i = 1; i < 10; i++)
+				{
+					konami_code_detect[i - 1] = konami_code_detect[i];
+				}
+				konami_code_detect[9] = kb_in;
+				konami_code_detect[10] = konami_answer[10];
+				/*gotoxy(HX - 55, HY);
+				for (int i = 0; i < 10; i++)
+					printf("%c", konami_answer[i]);
+				gotoxy(HX - 25, HY);
+				for (int i = 0; i < 10; i++)
+					printf("%c", konami_code_detect[i]);
+				printf("  %d", strcmp(konami_answer, konami_code_detect));*/
+			}
+			//detect konami code end
+
+			if (strcmp(konami_answer, konami_code_detect) == 0 && konami_activated == false)//konami code activate
+			{
+				konami_activated = true;
+				system("cls");
+				gotoxy(width / 2, height / 2);
+				RED;
+				printf("Konami Code ");
+				GREEN;
+				printf("ACTIVATED");
+				ORIGINAL;
+				clear_bullets();
+				Beep(523, 500);
+				Sleep(500);
+				gotoxy(0, 0);
+				map_print();
+			}
+			else if (strcmp(konami_answer, konami_code_detect) == 0)//konami code deactivate
+			{
+				konami_activated = false;
+				system("cls");
+				gotoxy(width / 2 - 1, height / 2);
+				RED;
+				printf("Konami Code ");
+				GREEN;
+				printf("DEACTIVATED");
+				ORIGINAL;
+				clear_bullets();
+				Beep(523, 500);
+				Sleep(500);
+				gotoxy(0, 0);
+				map_print();
+			}
+
 			if (kb_in == 27)//if it's 'esc' key
 			{
 				//show the option tab and operate the selection
