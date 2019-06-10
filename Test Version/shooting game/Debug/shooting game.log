@@ -3,4 +3,6 @@ F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(69,16): warni
 F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(69,21): warning C4838:  'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
 F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(288,17): warning C4244:  '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(355,12): warning C4244:  '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(425,11): warning C4553:  '==': 식의 결과가 사용되지 않습니다. '='을(를) 의도했습니까?
+F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(449,11): warning C4553:  '==': 식의 결과가 사용되지 않습니다. '='을(를) 의도했습니까?
   shooting game.vcxproj -> F:\Final Project\Shooting_Game\Test Version\Debug\shooting game.exe

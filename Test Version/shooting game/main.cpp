@@ -240,6 +240,19 @@ void enemay_creake(int level_enemy)
 		printf("%%");
 	}
 }
+void vibrate_enemy()
+{
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			if (enemy[j][i].type == 5 && enemy[j][i].timer == 0)
+			{
+				
+			}
+		}
+	}
+}
 void move_enemy()
 {
 	
@@ -410,33 +423,49 @@ int main()
 			{
 				konami_activated = true;
 				system("cls");
+				clear_bullets();
 				gotoxy(width / 2, height / 2);
 				RED;
 				printf("Konami Code ");
 				GREEN;
 				printf("ACTIVATED");
 				ORIGINAL;
-				clear_bullets();
-				Beep(523, 500);
+				Beep(523, 150);
+				Beep(723, 150);
 				Sleep(500);
 				gotoxy(0, 0);
 				map_print();
+				kb_in == 'd';
+
+				gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + 27);
+				printf("Konami Code ");
+				GREEN;
+				printf("ACTIVATED");
+				ORIGINAL;
 			}
 			else if (strcmp(konami_answer, konami_code_detect) == 0)//konami code deactivate
 			{
 				konami_activated = false;
 				system("cls");
+				clear_bullets();
 				gotoxy(width / 2 - 1, height / 2);
 				RED;
 				printf("Konami Code ");
 				GREEN;
 				printf("DEACTIVATED");
 				ORIGINAL;
-				clear_bullets();
-				Beep(523, 500);
+				Beep(723, 150);
+				Beep(523, 150);
 				Sleep(500);
 				gotoxy(0, 0);
 				map_print();
+				kb_in == 'd';
+
+				gotoxy(Flag_Ranking_Disp_Position_x - 1, Flag_Ranking_Disp_Position_y + 27);
+				printf("Konami Code ");
+				RED;
+				printf("DEACTIVATED");
+				ORIGINAL;
 			}
 
 			if (kb_in == 27)//if it's 'esc' key
