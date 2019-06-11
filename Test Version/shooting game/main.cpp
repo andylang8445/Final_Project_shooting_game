@@ -132,17 +132,27 @@ void map_print()
 			if (map[i][j] == 0 && enemy[j][i].type == 0)
 				printf(" ");
 			else if (map[i][j] == 1)
+			{
 				printf("*");
+			}
 			else if (map[i][j] == 2)
 				printf("A");
 			else if (map[i][j] == 3)
 				printf("=");
 			else if (map[i][j] == 4)
+			{
+				GREEN;
 				printf("|");
+				ORIGINAL;
+			}
 			else if (map[i][j] == 5)
 				printf("%%");
 			else if (map[i][j] >= type5bandwidth && map[i][j] <= type5bandwidth + type5timer)
+			{
+				YELLOW;
 				printf("@");
+				ORIGINAL;
+			}
 			else if (enemy[j][i].type == 5)
 				printf("%%");
 		}
@@ -242,13 +252,19 @@ void enemay_creake(int level_enemy)
 }
 void vibrate_enemy()
 {
-	for (int i = 0; i < height; i++)
+	for (int i = height - 1; i >= 0; i--)
 	{
 		for (int j = 0; j < width; j++)
 		{
-			if (enemy[j][i].type == 5 && enemy[j][i].timer == 0)
+			if (enemy[j][i].type == 5 && enemy[j][i].timer == 1 && rand() % 2 == 0)
 			{
-				
+				gotoxy(j, i);
+				printf(" ");
+				gotoxy(j, i+1);
+				printf("%%");
+
+				enemy[j][i + 1] = enemy[j][i];
+				enemy[j][i].type = 0;
 			}
 		}
 	}
@@ -280,7 +296,9 @@ void Blink_Player(int blink_num)
 		printf("   ");
 		Sleep(50);
 		gotoxy(PX - 1, PY);
+		BLOOD;
 		printf("=A=");
+		ORIGINAL;
 		Sleep(50);
 	}
 	gotoxy(PX - 1, PY);
@@ -291,7 +309,9 @@ void Blink_Player(int blink_num)
 	PX = PX_origin;
 	PY = PY_origin;
 	gotoxy(PX - 1, PY);
+	SKY_BLUE;
 	printf("=A=");
+	ORIGINAL;
 	clear_bullets();
 }
 int get_distanace(int x1, int  x2, int  y1, int  y2)
@@ -388,6 +408,8 @@ int main()
 		{
 			kb_in = _getch();//save the presse key
 
+			vibrate_enemy();
+
 			//detect konami code start
 			if (K_code_cnt <= 10)
 			{
@@ -435,7 +457,7 @@ int main()
 				Sleep(500);
 				gotoxy(0, 0);
 				map_print();
-				kb_in == 'd';
+				kb_in = 'b';
 
 				gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + 27);
 				printf("Konami Code ");
@@ -459,7 +481,7 @@ int main()
 				Sleep(500);
 				gotoxy(0, 0);
 				map_print();
-				kb_in == 'd';
+				kb_in = 'b';
 
 				gotoxy(Flag_Ranking_Disp_Position_x - 1, Flag_Ranking_Disp_Position_y + 27);
 				printf("Konami Code ");
@@ -731,7 +753,10 @@ int main()
 				map[PY][PX] = 2;//mark the player unit to the array
 				map[PY][PX - 1] = map[PY][PX + 1] = 3;
 				gotoxy(PX - 1, PY);//move the cersur to player's current location
+				SKY_BLUE;
 				printf("=A=");//print the player unit on the screen
+				ORIGINAL;
+				
 			}
 
 			if (kb_in == 'l' && map[PY - 1][PX] == 0)//if the pressed key is 'l'
@@ -739,7 +764,9 @@ int main()
 				Beep(1512, 2);
 				map[PY - 1][PX] = 4;//save the bullet to the array
 				gotoxy(PX, PY - 1);//move the cersur to the location where the bullet is fired
+				GREEN;
 				printf("|");//print the bullet on the screen
+				ORIGINAL;
 
 			}
 		}
@@ -774,7 +801,9 @@ int main()
 						{
 							map[i - 1][j] = 4;
 							gotoxy(j, i - 1);
+							GREEN;
 							printf("|");
+							ORIGINAL;
 						}
 						else if (map[i - 1][j] > type5bandwidth && map[i - 1][j] <= type5bandwidth + type5timer)
 						{
@@ -803,7 +832,9 @@ int main()
 						{
 							map[i + 1][j] = map[i][j] - 1;
 							gotoxy(j, i + 1);
+							YELLOW;
 							printf("@");
+							ORIGINAL;
 						}
 						else if (map[i + 1][j] == 2 || map[i + 1][j] == 3)
 						{
@@ -849,7 +880,9 @@ int main()
 							map[i + 1][j] = type5bandwidth + type5timer;
 							Beep(1551, 2);
 							gotoxy(j, i + 1);
+							YELLOW;
 							printf("@");
+							ORIGINAL;
 							enemy[j][i].timer = type5timer;
 						}
 					}
@@ -874,5 +907,9 @@ int main()
 	gotoxy(width/2, height/2);
 	RED;
 	printf("Thank you for playing!");
-	while (1);
+	for (int i = 0; i < 15; i++)
+	{
+		Sleep(5);
+	}
+	_getch();
 }
