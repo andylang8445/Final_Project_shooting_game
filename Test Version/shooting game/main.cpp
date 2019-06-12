@@ -136,9 +136,17 @@ void map_print()
 				printf("*");
 			}
 			else if (map[i][j] == 2)
+			{
+				SKY_BLUE;
 				printf("A");
+				ORIGINAL;
+			}
 			else if (map[i][j] == 3)
+			{
+				SKY_BLUE;
 				printf("=");
+				ORIGINAL;
+			}
 			else if (map[i][j] == 4)
 			{
 				GREEN;
@@ -146,7 +154,11 @@ void map_print()
 				ORIGINAL;
 			}
 			else if (map[i][j] == 5)
+			{
+				RED;
 				printf("%%");
+				ORIGINAL;
+			}
 			else if (map[i][j] >= type5bandwidth && map[i][j] <= type5bandwidth + type5timer)
 			{
 				YELLOW;
@@ -154,7 +166,11 @@ void map_print()
 				ORIGINAL;
 			}
 			else if (enemy[j][i].type == 5)
+			{
+				RED;
 				printf("%%");
+				ORIGINAL;
+			}
 		}
 		if (i < height - 1)
 			printf("\n");
@@ -247,7 +263,9 @@ void enemay_creake(int level_enemy)
 		enemy[tmp_x][1].type = 5;
 		//enemy[tmp_x][1].timer = type5timer;
 		gotoxy(tmp_x, 1);
+		RED;
 		printf("%%");
+		ORIGINAL;
 	}
 }
 void vibrate_enemy()
@@ -256,15 +274,28 @@ void vibrate_enemy()
 	{
 		for (int j = 0; j < width; j++)
 		{
-			if (enemy[j][i].type == 5 && enemy[j][i].timer == 1 && rand() % 2 == 0)
+			if (enemy[j][i].type == 5 && enemy[j][i].timer == 1)
 			{
 				gotoxy(j, i);
 				printf(" ");
-				gotoxy(j, i+1);
-				printf("%%");
 
-				enemy[j][i + 1] = enemy[j][i];
-				enemy[j][i].type = 0;
+				if (rand() % 2 == 0 || j - 1 == 1)
+				{
+					enemy[j + 1][i + 1] = enemy[j][i];
+					enemy[j][i].type = 0;
+					gotoxy(j + 1, i + 1);
+				}
+				else
+				{
+					enemy[j - 1][i + 1] = enemy[j][i];
+					enemy[j][i].type = 0;
+					gotoxy(j - 1, i + 1);
+				}
+				RED;
+				printf("%%");
+				ORIGINAL;
+
+				
 			}
 		}
 	}
