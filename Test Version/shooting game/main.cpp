@@ -24,6 +24,8 @@
 #define type5bandwidth 8000
 #define minus_score_per_enemy_5 8
 #define PlayerInitialHealthGauge 3
+#define HX 88
+#define HY 35
 
 int map[height][width], PX = PX_origin, PY = PY_origin;
 int previous_PX = PX, previous_PY = PY;
@@ -32,7 +34,14 @@ int level = 0;
 int score = 0;
 int player_health_gauge = PlayerInitialHealthGauge;
 bool score_change = false;
+bool break_game_trigger = false;
+bool konami_activated = false;
 int playerID_charactor;
+long long int count_sleep = 0;
+int str_cmp_k_code = -1;
+char konami_code_detect[11];
+char konami_answer[11] = {"wwssadadba"};
+int K_code_cnt = 0;
 
 const int Flag_Ranking_Disp_Position_x = 116, Flag_Ranking_Disp_Position_y = 4;
 
@@ -59,6 +68,14 @@ void gotoxy(int xxx, int yyy)  //x,y순서로 입력, 커서 이동(배열 좌표아닌 실제 좌
 {
 	COORD pos = { xxx, yyy };
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
+}
+void health_dsp()
+{
+	gotoxy(HX,HY);
+	RED;
+	for(int i=0;i<player_health_gauge;i++)
+		printf("♥");
+	ORIGINAL;
 }
 void fff(void)
 {
@@ -88,32 +105,56 @@ void setting_screen()
 			map[i][width - 1] = 1;
 		}
 	}
-	map[PY_origin][PX_origin] = 2;//2 represents the symbol 'A'
-	map[PY_origin][PX_origin - 1] = map[PY_origin][PX_origin + 1] = 3;//3 represents the symbol '=', part of player icon
-
+	PY = PY_origin;
+	PX = PX_origin;
+	map[PY][PX] = 2;//2 represents the symbol 'A'
+	map[PY][PX - 1] = map[PY][PX + 1] = 3;//3 represents the symbol '=', part of player icon
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			enemy[j][i].type = 0;
+		}
+	}
 
 }
 void map_print()
 {
 	//printing screen start
+	if (count_sleep == 0)
+	{
+		//map[PY][PX - 1] = map[PY][PX] = map[PY][PX + 1] = 0;
+	}
 	for (int i = 0; i < height; i++)
 	{
 		for (int j = 0; j < width; j++)
 		{
-			if (map[i][j] == 0)
+			if (map[i][j] == 0 && enemy[j][i].type == 0)
 				printf(" ");
 			else if (map[i][j] == 1)
+			{
 				printf("*");
+			}
 			else if (map[i][j] == 2)
 				printf("A");
 			else if (map[i][j] == 3)
 				printf("=");
 			else if (map[i][j] == 4)
+			{
+				GREEN;
 				printf("|");
+				ORIGINAL;
+			}
 			else if (map[i][j] == 5)
 				printf("%%");
-
-			enemy[j][i].type = 0;
+			else if (map[i][j] >= type5bandwidth && map[i][j] <= type5bandwidth + type5timer)
+			{
+				YELLOW;
+				printf("@");
+				ORIGINAL;
+			}
+			else if (enemy[j][i].type == 5)
+				printf("%%");
 		}
 		if (i < height - 1)
 			printf("\n");
@@ -209,6 +250,25 @@ void enemay_creake(int level_enemy)
 		printf("%%");
 	}
 }
+void vibrate_enemy()
+{
+	for (int i = height - 1; i >= 0; i--)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			if (enemy[j][i].type == 5 && enemy[j][i].timer == 1 && rand() % 2 == 0)
+			{
+				gotoxy(j, i);
+				printf(" ");
+				gotoxy(j, i+1);
+				printf("%%");
+
+				enemy[j][i + 1] = enemy[j][i];
+				enemy[j][i].type = 0;
+			}
+		}
+	}
+}
 void move_enemy()
 {
 	
@@ -236,7 +296,9 @@ void Blink_Player(int blink_num)
 		printf("   ");
 		Sleep(50);
 		gotoxy(PX - 1, PY);
+		BLOOD;
 		printf("=A=");
+		ORIGINAL;
 		Sleep(50);
 	}
 	gotoxy(PX - 1, PY);
@@ -247,7 +309,9 @@ void Blink_Player(int blink_num)
 	PX = PX_origin;
 	PY = PY_origin;
 	gotoxy(PX - 1, PY);
+	SKY_BLUE;
 	printf("=A=");
+	ORIGINAL;
 	clear_bullets();
 }
 int get_distanace(int x1, int  x2, int  y1, int  y2)
@@ -256,6 +320,67 @@ int get_distanace(int x1, int  x2, int  y1, int  y2)
 	distance += (y1 - y2) * (y1 - y2);
 	distance = sqrt(distance);
 	return distance;
+}
+void clear_enemy()
+{
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			if (enemy[j][i].type == 5)
+			{
+				gotoxy(j, i);
+				printf(" ");
+				enemy[j][i].type = 0;
+			}
+		}
+	}
+}
+void clear_screen()
+{
+	for (int i = 1; i < height - 1; i++)
+	{
+		gotoxy(1, i);
+		for (int j = 1; j < width - 1; j++)
+		{
+			printf(" ");
+		}
+	}
+
+}
+void clear_player()
+{
+	gotoxy(PX, PY);
+	printf("   ");
+	map[PX][PY] = map[PX + 1][PY] = map[PX + 2][PY] = 0;
+}
+int game_over()
+{
+	clear_bullets();
+	clear_enemy();
+	clear_screen();
+	gotoxy(50, 18);
+	RED;
+	printf("GAME");
+	SKY_BLUE;
+	printf(" OVER");
+	ORIGINAL;
+	clear_player();
+	return 0;
+}
+void lose_health_gague()
+{
+	player_health_gauge--;
+	gotoxy(HX + 2 * player_health_gauge, HY);
+	printf(" ");
+	if (player_health_gauge == 0)
+	{
+		game_over();
+		_getch();
+		system("cls");
+		map_print();
+		break_game_trigger = true;
+	}
 }
 
 int main()
@@ -271,14 +396,100 @@ int main()
 	setting_screen();//set the map array
 
 	map_print();//prints the map
+	health_dsp();
 
 	playerID_charactor = 15;
 
-	for (long long int count_sleep = 0; break_check; count_sleep++)//while loop where the actual game is operated
+	for (count_sleep = 0; break_check; count_sleep++)//while loop where the actual game is operated
 	{
+		if (break_game_trigger == true)
+			break;
 		if (_kbhit())//if the keyboard is pressed
 		{
 			kb_in = _getch();//save the presse key
+
+			vibrate_enemy();
+
+			//detect konami code start
+			if (K_code_cnt <= 10)
+			{
+				konami_code_detect[K_code_cnt] = kb_in;
+				K_code_cnt++;
+				/*gotoxy(HX - 55, HY);
+				for (int i = 0; i < 10; i++)
+					printf("%c", konami_answer[i]);
+				gotoxy(HX - 25, HY);
+				for (int i = 0; i < 10; i++)
+					printf("%c", konami_code_detect[i]);
+				printf("  %d", strcmp(konami_answer, konami_code_detect));*/
+			}
+			else
+			{
+				for (int i = 1; i < 10; i++)
+				{
+					konami_code_detect[i - 1] = konami_code_detect[i];
+				}
+				konami_code_detect[9] = kb_in;
+				konami_code_detect[10] = konami_answer[10];
+				/*gotoxy(HX - 55, HY);
+				for (int i = 0; i < 10; i++)
+					printf("%c", konami_answer[i]);
+				gotoxy(HX - 25, HY);
+				for (int i = 0; i < 10; i++)
+					printf("%c", konami_code_detect[i]);
+				printf("  %d", strcmp(konami_answer, konami_code_detect));*/
+			}
+			//detect konami code end
+
+			if (strcmp(konami_answer, konami_code_detect) == 0 && konami_activated == false)//konami code activate
+			{
+				konami_activated = true;
+				system("cls");
+				clear_bullets();
+				gotoxy(width / 2, height / 2);
+				RED;
+				printf("Konami Code ");
+				GREEN;
+				printf("ACTIVATED");
+				ORIGINAL;
+				Beep(523, 150);
+				Beep(723, 150);
+				Sleep(500);
+				gotoxy(0, 0);
+				map_print();
+				kb_in = 'b';
+
+				gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + 27);
+				printf("Konami Code ");
+				GREEN;
+				printf("ACTIVATED");
+				ORIGINAL;
+			}
+			else if (strcmp(konami_answer, konami_code_detect) == 0)//konami code deactivate
+			{
+				konami_activated = false;
+				system("cls");
+				clear_bullets();
+				gotoxy(width / 2 - 1, height / 2);
+				RED;
+				printf("Konami Code ");
+				GREEN;
+				printf("DEACTIVATED");
+				ORIGINAL;
+				Beep(723, 150);
+				Beep(523, 150);
+				Sleep(500);
+				gotoxy(0, 0);
+				map_print();
+				kb_in = 'b';
+
+				gotoxy(Flag_Ranking_Disp_Position_x - 1, Flag_Ranking_Disp_Position_y + 27);
+				printf("Konami Code ");
+				RED;
+				printf("DEACTIVATED");
+				ORIGINAL;
+			}
+
 			if (kb_in == 27)//if it's 'esc' key
 			{
 				//show the option tab and operate the selection
@@ -375,7 +586,9 @@ int main()
 						{
 							system("cls");
 							setting_screen();
+							enemy_cnt = 0;
 							map_print();
+							count_sleep = 0;
 							break;
 						}
 						else if (kb_y == original_kb_y + 4)//Setting option
@@ -400,23 +613,89 @@ int main()
 									printf("##");
 								}
 							}
-							gotoxy(50, original_kb_y + 3);
-							printf("COMING SOON");
-							Sleep(750);
-							system("cls");
-							map_print();
-							break;
+							int nkb_x = 49;
+							int nkb_y = 13;
+							gotoxy(nkb_x, nkb_y);
+							printf("▶");
+
+							gotoxy(52, 13);
+							printf("THEME COLOUR");
+							gotoxy(52, 15);
+							printf("CHANGE LEVEL");
+							gotoxy(52, 17);
+							printf("PLAYER COLOUR");
+							gotoxy(52, 19);
+							printf("USER MANUAL");
+							while (!kb_resume)
+							{
+								int nkb_hit = _getch();
+								if (nkb_hit == 'w')
+								{
+									gotoxy(nkb_x, nkb_y);
+									printf(" ");
+
+									if (nkb_y != original_kb_y)
+										nkb_y -= 2;
+									else
+										nkb_y = 19;
+
+									gotoxy(nkb_x, nkb_y);
+									printf("▶");
+								}
+								else if (nkb_hit == 's')
+								{
+									gotoxy(nkb_x, nkb_y);
+									printf(" ");
+
+									if (nkb_y != 19)
+										nkb_y += 2;
+									else
+										nkb_y = original_kb_y;
+
+									gotoxy(nkb_x, nkb_y);
+									printf("▶");
+								}
+								else if (nkb_hit == 27)//esc
+								{
+									gotoxy(nkb_x, nkb_y);
+									printf(" ");
+									break;
+								}
+								else if (nkb_hit == 13)//if the 'enter' is hit
+								{
+
+								}
+							}
+							gotoxy(kb_x, kb_y);
+							printf("▶");
+
+							gotoxy(52, 13);
+							printf("RESUME      ");
+							gotoxy(52, 15);
+							printf("RESTART     ");
+							gotoxy(52, 17);
+							printf("SETTINGS     ");
+							gotoxy(52, 19);
+							printf("END GAME   ");
 						}
 						else//end the game
 						{
-							return 0;
+							game_over();
+							_getch();
+							system("cls");
+							map_print();
+							break_game_trigger = true;
+							break;
 						}
 
 					}//enter hit ends
 				}//go to the result the player seleced
 
-
 			}//end the option tab
+
+
+			if (break_game_trigger == true)
+				break;
 
 			if (kb_in == 'w')//if the pressed keyboard is 'w'
 			{
@@ -474,7 +753,10 @@ int main()
 				map[PY][PX] = 2;//mark the player unit to the array
 				map[PY][PX - 1] = map[PY][PX + 1] = 3;
 				gotoxy(PX - 1, PY);//move the cersur to player's current location
+				SKY_BLUE;
 				printf("=A=");//print the player unit on the screen
+				ORIGINAL;
+				
 			}
 
 			if (kb_in == 'l' && map[PY - 1][PX] == 0)//if the pressed key is 'l'
@@ -482,7 +764,9 @@ int main()
 				Beep(1512, 2);
 				map[PY - 1][PX] = 4;//save the bullet to the array
 				gotoxy(PX, PY - 1);//move the cersur to the location where the bullet is fired
+				GREEN;
 				printf("|");//print the bullet on the screen
+				ORIGINAL;
 
 			}
 		}
@@ -517,7 +801,15 @@ int main()
 						{
 							map[i - 1][j] = 4;
 							gotoxy(j, i - 1);
+							GREEN;
 							printf("|");
+							ORIGINAL;
+						}
+						else if (map[i - 1][j] > type5bandwidth && map[i - 1][j] <= type5bandwidth + type5timer)
+						{
+							map[i - 1][j] = 0;
+							gotoxy(j, i - 1);
+							printf(" ");
 						}
 					}
 				}
@@ -540,13 +832,15 @@ int main()
 						{
 							map[i + 1][j] = map[i][j] - 1;
 							gotoxy(j, i + 1);
+							YELLOW;
 							printf("@");
+							ORIGINAL;
 						}
 						else if (map[i + 1][j] == 2 || map[i + 1][j] == 3)
 						{
 							//Player Hit
 							Beep(1106, 5);
-							player_health_gauge--;
+							lose_health_gague();
 							if (score - minus_score_per_enemy_5 >= 0)
 								score -= minus_score_per_enemy_5;
 							if (map[i + 1][j] == 2)
@@ -574,11 +868,23 @@ int main()
 					}
 					if (enemy[j][i].type == 5 && enemy[j][i].timer == 0 && rand() % 6 == 0)
 					{
-						//enemy shoots the bulletdss
-						map[i + 1][j] = type5bandwidth + type5timer;
-						gotoxy(j, i + 1);
-						printf("@");
-						enemy[j][i].timer = type5timer;
+						if (map[i + 1][j] == 4)
+						{
+							map[i + 1][j] = 0;
+							gotoxy(j, i + 1);
+							printf(" ");
+						}
+						else if (map[i + 1][j] == 0)
+						{
+							//enemy shoots the bulletdss
+							map[i + 1][j] = type5bandwidth + type5timer;
+							Beep(1551, 2);
+							gotoxy(j, i + 1);
+							YELLOW;
+							printf("@");
+							ORIGINAL;
+							enemy[j][i].timer = type5timer;
+						}
 					}
 					else if (enemy[j][i].type == 5 && enemy[j][i].timer > 0)
 					{
@@ -597,4 +903,13 @@ int main()
 		Sleep(5);//give delay to operate the game properly that player can play
 		break_check = true;
 	}
+	system("cls");
+	gotoxy(width/2, height/2);
+	RED;
+	printf("Thank you for playing!");
+	for (int i = 0; i < 15; i++)
+	{
+		Sleep(5);
+	}
+	_getch();
 }
