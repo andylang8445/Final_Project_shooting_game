@@ -51,6 +51,7 @@ typedef struct Obj{
 	int type = 0;
 	int timer = 0;
 	bool print_status = false;
+	int vibration_record = 0;
 }object;
 
 typedef struct E_B {
@@ -268,28 +269,38 @@ void enemay_creake(int level_enemy)
 		ORIGINAL;
 	}
 }
-void vibrate_enemy()
+void vibrate_enemy(int time_stamp)
 {
 	for (int i = height - 1; i >= 0; i--)
 	{
 		for (int j = 0; j < width; j++)
 		{
-			if (enemy[j][i].type == 5 && enemy[j][i].timer == 1)
+			if (enemy[j][i].type == 5 && i <= height / 2 && enemy[j][i].vibration_record + 16 < time_stamp)
 			{
+				enemy[j][i].vibration_record = time_stamp;
 				gotoxy(j, i);
 				printf(" ");
 
-				if (rand() % 2 == 0 || j - 1 == 1)
+				if (rand() % 2 == 0 && enemy[j + 1][i + 1].type == 0 || j - 1 == 1 && enemy[j + 1][i + 1].type == 0)//move 
 				{
 					enemy[j + 1][i + 1] = enemy[j][i];
+					enemy[j + 1][i + 1].timer++;
 					enemy[j][i].type = 0;
 					gotoxy(j + 1, i + 1);
 				}
-				else
+				else if (j + 1 == width - 1 && enemy[j - 1][i + 1].type == 0)
 				{
 					enemy[j - 1][i + 1] = enemy[j][i];
+					enemy[j - 1][i + 1].timer++;
 					enemy[j][i].type = 0;
 					gotoxy(j - 1, i + 1);
+				}
+				else
+				{
+					enemy[j][i + 1] = enemy[j][i];
+					enemy[j][i + 1].timer++;
+					enemy[j][i].type = 0;
+					gotoxy(j, i + 1);
 				}
 				RED;
 				printf("%%");
@@ -439,7 +450,7 @@ int main()
 		{
 			kb_in = _getch();//save the presse key
 
-			vibrate_enemy();
+			vibrate_enemy(count_sleep);
 
 			//detect konami code start
 			if (K_code_cnt <= 10)
