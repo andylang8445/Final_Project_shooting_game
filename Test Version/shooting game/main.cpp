@@ -269,33 +269,47 @@ void enemay_creake(int level_enemy)
 		ORIGINAL;
 	}
 }
-void vibrate_enemy(int time_stamp)
+void vibrate_enemy(int time_stamp)//If statement rearrage required
 {
 	for (int i = height - 1; i >= 0; i--)
 	{
 		for (int j = 0; j < width; j++)
 		{
-			if (enemy[j][i].type == 5 && i <= height / 2 && enemy[j][i].vibration_record + 16 < time_stamp)
+			if (enemy[j][i].type == 5 && enemy[j][i].vibration_record + 64 < time_stamp)
 			{
 				enemy[j][i].vibration_record = time_stamp;
 				gotoxy(j, i);
 				printf(" ");
 
-				if (rand() % 2 == 0 && enemy[j + 1][i + 1].type == 0 || j - 1 == 1 && enemy[j + 1][i + 1].type == 0)//move 
+				if (i < 3 * height / 7 && rand() % 2 == 0 && enemy[j + 1][i + 1].type == 0 && map[i][j + 1] == 0 && map[i][j + 2] == 0 || i < 3 * height / 7 && j - 1 == 1 && enemy[j + 1][i + 1].type == 0 && map[i][j + 1] == 0 && map[i][j + 2] == 0)
 				{
 					enemy[j + 1][i + 1] = enemy[j][i];
 					enemy[j + 1][i + 1].timer++;
 					enemy[j][i].type = 0;
 					gotoxy(j + 1, i + 1);
 				}
-				else if (j + 1 == width - 1 && enemy[j - 1][i + 1].type == 0)
+				else if (i < 3 * height / 7 && j + 1 == width - 1 && enemy[j - 1][i + 1].type == 0)
 				{
 					enemy[j - 1][i + 1] = enemy[j][i];
 					enemy[j - 1][i + 1].timer++;
 					enemy[j][i].type = 0;
 					gotoxy(j - 1, i + 1);
 				}
-				else
+				else if (rand() % 2 == 0&& j==1&& enemy[j + 1][i].type == 0)
+				{
+					enemy[j + 1][i] = enemy[j][i];
+					enemy[j + 1][i].timer++;
+					enemy[j][i].type = 0;
+					gotoxy(j + 1, i);
+				}
+				else if (rand() % 2 == 0 && j + 1 == width - 1 && enemy[j - 1][i].type == 0)
+				{
+					enemy[j - 1][i] = enemy[j][i];
+					enemy[j - 1][i].timer++;
+					enemy[j][i].type = 0;
+					gotoxy(j - 1, i);
+				}
+				else if(i < 3 * height / 7)
 				{
 					enemy[j][i + 1] = enemy[j][i];
 					enemy[j][i + 1].timer++;
@@ -446,11 +460,11 @@ int main()
 	{
 		if (break_game_trigger == true)
 			break;
+		vibrate_enemy(count_sleep);
 		if (_kbhit())//if the keyboard is pressed
 		{
 			kb_in = _getch();//save the presse key
 
-			vibrate_enemy(count_sleep);
 
 			//detect konami code start
 			if (K_code_cnt <= 10)
@@ -741,7 +755,7 @@ int main()
 
 			if (kb_in == 'w')//if the pressed keyboard is 'w'
 			{
-				if (PY > (3 * height / 7))//if the front of player unit if not wall
+				if (PY > (3 * height / 7) + 2)//if the front of player unit if not wall
 				{
 					previous_PY = PY;
 					previous_PX = PX;
@@ -765,7 +779,7 @@ int main()
 			}
 			else if (kb_in == 'a')//if the pressed keyboard is 'w'
 			{
-				if (PX > 2)//if the left of player unit if not wall
+				if (PX > 2 && map[PY][PX - 2] == 0)//if the left of player unit if not wall
 				{
 					previous_PY = PY;
 					previous_PX = PX;
@@ -776,7 +790,7 @@ int main()
 			}
 			else if (kb_in == 'd')//if the pressed keyboard is 'w'
 			{
-				if (PX < width - 3)//if the right of player unit if not wall
+				if (map[PY][PX + 2] == 0)//if the right of player unit if not wall
 				{
 					previous_PY = PY;
 					previous_PX = PX;
