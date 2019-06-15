@@ -20,7 +20,7 @@
 #define PY_origin 31
 #define original_kb_y 13
 #define score_per_enemy_5 15
-#define type5timer 32
+#define type5timer 16
 #define type5bandwidth 8000
 #define minus_score_per_enemy_5 8
 #define PlayerInitialHealthGauge 3
@@ -271,63 +271,29 @@ void enemay_creake(int level_enemy)
 }
 void vibrate_enemy(int time_stamp)//If statement rearrage required
 {
-	for (int i = height - 1; i >= 0; i--)
+	int enemy_address[2][8];
+	int enemy_ad_cnt = 0;
+	for (int i = 0; i < height; i++)
 	{
 		for (int j = 0; j < width; j++)
 		{
-			if (enemy[j][i].type == 5 && enemy[j][i].vibration_record + 64 < time_stamp)
+			if (map[i][j] == 5)
 			{
-				enemy[j][i].vibration_record = time_stamp;
-				gotoxy(j, i);
-				printf(" ");
-
-				if (i < 3 * height / 7 && rand() % 2 == 0 && enemy[j + 1][i + 1].type == 0 && map[i][j + 1] == 0 && map[i][j + 2] == 0 || i < 3 * height / 7 && j - 1 == 1 && enemy[j + 1][i + 1].type == 0 && map[i][j + 1] == 0 && map[i][j + 2] == 0)
-				{
-					enemy[j + 1][i + 1] = enemy[j][i];
-					enemy[j + 1][i + 1].timer++;
-					enemy[j][i].type = 0;
-					gotoxy(j + 1, i + 1);
-				}
-				else if (i < 3 * height / 7 && j + 1 == width - 1 && enemy[j - 1][i + 1].type == 0)
-				{
-					enemy[j - 1][i + 1] = enemy[j][i];
-					enemy[j - 1][i + 1].timer++;
-					enemy[j][i].type = 0;
-					gotoxy(j - 1, i + 1);
-				}
-				else if (rand() % 2 == 0&& j==1&& enemy[j + 1][i].type == 0)
-				{
-					enemy[j + 1][i] = enemy[j][i];
-					enemy[j + 1][i].timer++;
-					enemy[j][i].type = 0;
-					gotoxy(j + 1, i);
-				}
-				else if (rand() % 2 == 0 && j + 1 == width - 1 && enemy[j - 1][i].type == 0)
-				{
-					enemy[j - 1][i] = enemy[j][i];
-					enemy[j - 1][i].timer++;
-					enemy[j][i].type = 0;
-					gotoxy(j - 1, i);
-				}
-				else if(i < 3 * height / 7)
-				{
-					enemy[j][i + 1] = enemy[j][i];
-					enemy[j][i + 1].timer++;
-					enemy[j][i].type = 0;
-					gotoxy(j, i + 1);
-				}
-				RED;
-				printf("%%");
-				ORIGINAL;
-
-				
+				enemy_address[0][enemy_ad_cnt] = i;
+				enemy_address[1][enemy_ad_cnt] = j;
+				enemy_ad_cnt++;
 			}
 		}
 	}
+
+	for (int i = 0; i < enemy_ad_cnt; i++)//apply the enemy move algorithm
+	{
+
+	}
 }
-void move_enemy()
+void move_enemy(int handed_time_stamp)
 {
-	
+	vibrate_enemy(handed_time_stamp);
 }
 void clear_bullets()
 {
