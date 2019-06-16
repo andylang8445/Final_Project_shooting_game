@@ -20,7 +20,7 @@
 #define PY_origin 31
 #define original_kb_y 13
 #define score_per_enemy_5 15
-#define type5timer 16
+#define type5timer 32
 #define type5bandwidth 8000
 #define minus_score_per_enemy_5 8
 #define PlayerInitialHealthGauge 3
@@ -277,8 +277,12 @@ void vibrate_enemy(int time_stamp)//If statement rearrage required
 	{
 		for (int j = 0; j < width; j++)
 		{
-			if (map[i][j] == 5)
+			if (enemy[j][i].type == 5)
 			{
+				enemy[j][i].vibration_record = time_stamp;
+				gotoxy(j, i);
+				printf(" ");
+
 				enemy_address[0][enemy_ad_cnt] = i;
 				enemy_address[1][enemy_ad_cnt] = j;
 				enemy_ad_cnt++;
@@ -288,7 +292,52 @@ void vibrate_enemy(int time_stamp)//If statement rearrage required
 
 	for (int i = 0; i < enemy_ad_cnt; i++)//apply the enemy move algorithm
 	{
+		if (map[enemy_address[0][i]][enemy_address[1][i] - 1] == 1 && map[enemy_address[0][i]][enemy_address[1][i] - 2] == 1 && enemy[enemy_address[1][i] - 1][enemy_address[0][i]].type == 0)//if left is blocked
+		{
+			if (map[enemy_address[0][i]][enemy_address[1][i] + 1] == 1 && map[enemy_address[0][i]][enemy_address[1][i] + 2] == 1 && enemy[enemy_address[1][i] + 1][enemy_address[0][i]].type == 0)//if right is blocked
+			{
+				//remain the position
+			}
+			else if (rand() % 3 != 0)
+			{
+				enemy[enemy_address[1][i] + 1][enemy_address[0][i]] = enemy[enemy_address[1][i]][enemy_address[0][i]];
+				enemy[enemy_address[1][i]][enemy_address[0][i]].type = 0;
 
+				gotoxy(enemy_address[1][i] + 1, enemy_address[0][i]);//move right
+			}
+		}
+		else if (map[enemy_address[0][i]][enemy_address[1][i] + 1] == 0 && map[enemy_address[0][i]][enemy_address[1][i] + 2] == 1 && enemy[enemy_address[1][i] + 1][enemy_address[0][i]].type == 0)//if right is blocked
+		{
+			if (rand() % 3 != 0)
+			{
+				enemy[enemy_address[1][i] - 1][enemy_address[0][i]] = enemy[enemy_address[1][i]][enemy_address[0][i]];
+				enemy[enemy_address[1][i]][enemy_address[0][i]].type = 0;
+
+				gotoxy(enemy_address[1][i] - 1, enemy_address[0][i]);//move left
+			}
+		}
+		else
+		{
+			int move_randomly_enemy_type5 = rand() % 3;
+			if (move_randomly_enemy_type5 == 0 && map[enemy_address[0][i]][enemy_address[1][i] + 1] == 1 && map[enemy_address[0][i]][enemy_address[1][i] + 2] == 1)
+			{
+				enemy[enemy_address[1][i] + 1][enemy_address[0][i]] = enemy[enemy_address[1][i]][enemy_address[0][i]];
+				enemy[enemy_address[1][i]][enemy_address[0][i]].type = 0;
+
+				gotoxy(enemy_address[1][i] + 1, enemy_address[0][i]);//move right
+			}
+			else if (move_randomly_enemy_type5 == 1 && map[enemy_address[0][i]][enemy_address[1][i] - 1] == 1 && map[enemy_address[0][i]][enemy_address[1][i] - 2] == 1)
+			{
+				enemy[enemy_address[1][i] - 1][enemy_address[0][i]] = enemy[enemy_address[1][i]][enemy_address[0][i]];
+				enemy[enemy_address[1][i]][enemy_address[0][i]].type = 0;
+
+				gotoxy(enemy_address[1][i] - 1, enemy_address[0][i]);//move left
+			}
+		}
+
+		RED;
+		printf("%%");
+		ORIGINAL;
 	}
 }
 void move_enemy(int handed_time_stamp)
