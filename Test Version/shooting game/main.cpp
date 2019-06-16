@@ -26,7 +26,11 @@
 #define PlayerInitialHealthGauge 3
 #define HX 88
 #define HY 35
+#define original_mag_size 30
+#define original_reloading_time 4
 
+int initial_magazine_size = original_mag_size;
+int initial_reloading_time_per_bullet = original_reloading_time;
 int map[height][width], PX = PX_origin, PY = PY_origin;
 int previous_PX = PX, previous_PY = PY;
 int enemy_cnt = 0;
@@ -42,6 +46,9 @@ int str_cmp_k_code = -1;
 char konami_code_detect[11];
 char konami_answer[11] = {"wwssadadba"};
 int K_code_cnt = 0;
+int reloading_counter = 0;
+
+int magazine_bullet = initial_magazine_size;
 
 const int Flag_Ranking_Disp_Position_x = 116, Flag_Ranking_Disp_Position_y = 4;
 
@@ -249,9 +256,16 @@ void map_print()
 	}
 
 	SKY_BLUE
-	gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + 20);
+	gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + 18);
 	printf(" andylang8445: %5d", score);
-	ORIGINAL
+	ORIGINAL;
+
+	gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + 23);
+	YELLOW;
+	printf("Remaining Bullet: ");
+	GREEN;
+	printf("%2d", magazine_bullet);
+	ORIGINAL;
 }
 void enemay_creake(int level_enemy)
 {
@@ -271,7 +285,7 @@ void enemay_creake(int level_enemy)
 }
 void vibrate_enemy(int time_stamp)//If statement rearrage required
 {
-	int enemy_address[2][8];
+	/*int enemy_address[2][8];
 	int enemy_ad_cnt = 0;
 	for (int i = 0; i < height; i++)
 	{
@@ -338,6 +352,94 @@ void vibrate_enemy(int time_stamp)//If statement rearrage required
 		RED;
 		printf("%%");
 		ORIGINAL;
+	}*/
+
+	enemy_cnt = 0;
+
+	for (int i = height - 1; i >= 0; i--)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			if (enemy[j][i].type == 5)
+			{
+				enemy_cnt++;
+			}
+			if (enemy[j][i].type == 5 && enemy[j][i].vibration_record + 64 < time_stamp)
+			{
+				if (i < 3 * height / 7 && rand() % 3 != 0 && enemy[j + 1][i + 1].type == 0 && map[i][j + 1] == 0 && map[i][j + 2] == 0 || i < 3 * height / 7 && j - 1 == 1 && enemy[j + 1][i + 1].type == 0 && map[i][j + 1] == 0 && map[i][j + 2] == 0)
+				{
+					enemy[j][i].vibration_record = time_stamp;
+					gotoxy(j, i);
+					printf(" ");
+
+					enemy[j + 1][i + 1] = enemy[j][i];
+					enemy[j][i].type = 0;
+					gotoxy(j + 1, i + 1);
+
+					RED;
+					printf("%%");
+					ORIGINAL;
+				}
+				else if (i < 3 * height / 7 && j + 1 == width - 1 && enemy[j - 1][i + 1].type == 0)
+				{
+					enemy[j][i].vibration_record = time_stamp;
+					gotoxy(j, i);
+					printf(" ");
+
+					enemy[j - 1][i + 1] = enemy[j][i];
+					enemy[j][i].type = 0;
+					gotoxy(j - 1, i + 1);
+
+					RED;
+					printf("%%");
+					ORIGINAL;
+				}
+				else if (rand() % 3 != 0 && j == 1 && enemy[j + 1][i].type == 0)
+				{
+					enemy[j][i].vibration_record = time_stamp;
+					gotoxy(j, i);
+					printf(" ");
+
+					enemy[j + 1][i] = enemy[j][i];
+					enemy[j][i].type = 0;
+					gotoxy(j + 1, i);
+
+					RED;
+					printf("%%");
+					ORIGINAL;
+				}
+				else if (rand() % 3 != 0 && j + 1 == width - 1 && enemy[j - 1][i].type == 0)
+				{
+					enemy[j][i].vibration_record = time_stamp;
+					gotoxy(j, i);
+					printf(" ");
+
+					enemy[j - 1][i] = enemy[j][i];
+					enemy[j][i].type = 0;
+					gotoxy(j - 1, i);
+
+					RED;
+					printf("%%");
+					ORIGINAL;
+				}
+				else if (i < 3 * height / 7)
+				{
+					enemy[j][i].vibration_record = time_stamp;
+					gotoxy(j, i);
+					printf(" ");
+
+					enemy[j][i + 1] = enemy[j][i];
+					enemy[j][i].type = 0;
+					gotoxy(j, i + 1);
+
+					RED;
+					printf("%%");
+					ORIGINAL;
+				}
+
+
+			}
+		}
 	}
 }
 void move_enemy(int handed_time_stamp)
@@ -535,6 +637,11 @@ int main()
 				GREEN;
 				printf("ACTIVATED");
 				ORIGINAL;
+
+				initial_magazine_size = 99;
+				initial_reloading_time_per_bullet = 0;
+				magazine_bullet = initial_magazine_size;
+				reloading_counter = initial_reloading_time_per_bullet;
 			}
 			else if (strcmp(konami_answer, konami_code_detect) == 0)//konami code deactivate
 			{
@@ -559,6 +666,10 @@ int main()
 				RED;
 				printf("DEACTIVATED");
 				ORIGINAL;
+
+				initial_magazine_size = original_mag_size;
+				initial_reloading_time_per_bullet = original_reloading_time;
+				magazine_bullet = initial_magazine_size;
 			}
 
 			if (kb_in == 27)//if it's 'esc' key
@@ -832,13 +943,57 @@ int main()
 
 			if (kb_in == 'l' && map[PY - 1][PX] == 0)//if the pressed key is 'l'
 			{
-				Beep(1512, 2);
-				map[PY - 1][PX] = 4;//save the bullet to the array
-				gotoxy(PX, PY - 1);//move the cersur to the location where the bullet is fired
-				GREEN;
-				printf("|");//print the bullet on the screen
-				ORIGINAL;
+				if (magazine_bullet <= 0 && reloading_counter == 0)
+				{
+					magazine_bullet = initial_magazine_size;
+					gotoxy(Flag_Ranking_Disp_Position_x + 6, Flag_Ranking_Disp_Position_y + 25);
+					printf("         ");
+				}
 
+				if (magazine_bullet > 0)
+				{
+					magazine_bullet--;
+					Beep(1512, 2);
+					map[PY - 1][PX] = 4;//save the bullet to the array
+					gotoxy(PX, PY - 1);//move the cersur to the location where the bullet is fired
+					GREEN;
+					printf("|");//print the bullet on the screen
+				}
+				else
+				{
+					Beep(1024, 5);
+				}
+
+				gotoxy(Flag_Ranking_Disp_Position_x + 18, Flag_Ranking_Disp_Position_y + 23);
+				if (magazine_bullet >= (2 * initial_magazine_size / 5) && magazine_bullet >= 0)
+				{
+					GREEN;
+					printf("%2d", magazine_bullet);
+				}
+				else if (magazine_bullet > 0)
+				{
+					RED;
+					printf("%2d", magazine_bullet);
+				}
+				else if (reloading_counter == 0)
+				{
+					RED;
+					printf("%2d", 0);
+					gotoxy(Flag_Ranking_Disp_Position_x + 6, Flag_Ranking_Disp_Position_y + 25);
+					printf("Reloading");
+					reloading_counter = initial_reloading_time_per_bullet * initial_magazine_size;
+				}
+				ORIGINAL;
+			}
+		}
+		if (count_sleep % 5 == 0)
+		{
+			if (magazine_bullet == 0 && reloading_counter > 0)
+			{
+				reloading_counter--;//reloading time count
+
+				gotoxy(Flag_Ranking_Disp_Position_x + 6, Flag_Ranking_Disp_Position_y + 26);
+				printf("%2d", reloading_counter);
 			}
 		}
 		if (enemy_cnt == 0)
@@ -912,6 +1067,15 @@ int main()
 							//Player Hit
 							Beep(1106, 5);
 							lose_health_gague();
+
+							//initialie the bullet due to the lose of health
+							reloading_counter = 1;
+							magazine_bullet = initial_magazine_size;
+
+							gotoxy(Flag_Ranking_Disp_Position_x + 18, Flag_Ranking_Disp_Position_y + 24);
+							GREEN;
+							printf("%2d", magazine_bullet);
+
 							if (score - minus_score_per_enemy_5 >= 0)
 								score -= minus_score_per_enemy_5;
 							if (map[i + 1][j] == 2)
@@ -967,7 +1131,7 @@ int main()
 		if (score_change == true)
 		{
 			SKY_BLUE;
-			gotoxy(Flag_Ranking_Disp_Position_x + playerID_charactor, Flag_Ranking_Disp_Position_y + 20);
+			gotoxy(Flag_Ranking_Disp_Position_x + playerID_charactor, Flag_Ranking_Disp_Position_y + 18);
 			printf("%5d", score);
 			ORIGINAL;
 		}
