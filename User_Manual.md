@@ -13,13 +13,18 @@
 # User Manual - reloading
   - Use 'r' to start manual reloading
     - The orange colored word "Reloading" will appear on the right down corner of the screen
-  - If the player run out of bullet and tries to Shoot, it will automatically start the automatic reloading process
+  - If the player runs out of bullets and tries to Shoot, it will automatically start the automatic reloading process
     - The red colored word "Reloading" will appear on the right down corner of the screen
   - During the manual reloading, it is possible to stop reloading and start shooting with remaining number of bullets
   - During the automatic reloading, it is impossible to stop reloading
-  - Reloading each bullet will require 25 millisecond
+  - Reloading each bullet will require certain amount of time
 
 # User Manual - enemy
-  - Four general enemy will appear each round
-  - One or two enemy that shoots bullet in angles will appear each round
-  - If an enemy shoots the bullet, it cannot shoot for 
+  - Four general enemies will appear each round
+  - One or two enemies that shoot bullets in an angle will appear each round
+  - If an enemy shoots the bullet, it cannot shoot for certain amount of time
+  - Enemy will move until it hits the player move limit
+
+# User Manual - Scoring
+  - If the player gets hit by enemy's bullet, the player will lose certain amount of total score
+  - If the player's bullet hits the enemy, the player will get a certain amount of score based on the type on enemy
