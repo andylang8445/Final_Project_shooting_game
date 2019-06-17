@@ -1,8 +1,9 @@
 ﻿  main.cpp
 F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(86,16): warning C4838:  'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
 F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(86,21): warning C4838:  'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
-F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(535,17): warning C4244:  '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(602,12): warning C4244:  '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(634,17): warning C4244:  '인수': '__int64'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(1186,41): warning C4244:  '-=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(537,17): warning C4244:  '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(604,12): warning C4244:  '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(646,17): warning C4244:  '인수': '__int64'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(1204,41): warning C4244:  '-=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(1252,41): warning C4244:  '-=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   shooting game.vcxproj -> F:\Final Project\Shooting_Game\Test Version\Debug\shooting game.exe

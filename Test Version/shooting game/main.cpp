@@ -160,7 +160,9 @@ void map_print()
 				printf(" ");
 			else if (map[i][j] == 1)
 			{
+				ORIGINAL;
 				printf("*");
+				ORIGINAL;
 			}
 			else if (map[i][j] == 2)
 			{
@@ -600,12 +602,22 @@ void lose_health_gague()
 int main()
 {
 	srand(time(NULL));
+	
+	system("title Shooting Game");//set the title of the screen
+	printf("\tWe will redirect you to the user manual shortly...");
+	Sleep(50);
+	system("start https://andylang8445.github.io/school%20class/school_grade11/project/computer%20science/user%20manual/2019/06/16/User_Manual_ICS3U_Final_Project/#more");
+
+	printf("\tPress any key to start the game\n");
+	RED;
+	printf("\t*The User Manual will only provided once*");
+	ORIGINAL;
+	_getch();
 
 	bool trick_triger = false;
 	char kb_in;//contain the status of keyboard pressed
 
 	fff();//hide blinking cerser
-	system("title Shooting Game");//set the title of the screen
 	system("mode con cols=140 lines=37");//set the size of the screen
 	setting_screen();//set the map array
 
@@ -622,8 +634,8 @@ int main()
 			magazine_bullet = initial_magazine_size;
 			gotoxy(Flag_Ranking_Disp_Position_x + 6, Flag_Ranking_Disp_Position_y + 25);
 			printf("         ");
-			gotoxy(Flag_Ranking_Disp_Position_x + 6, Flag_Ranking_Disp_Position_y + 26);
-			printf("    ");
+			gotoxy(Flag_Ranking_Disp_Position_x + 3, Flag_Ranking_Disp_Position_y + 26);
+			printf("               ");
 			gotoxy(Flag_Ranking_Disp_Position_x + 18, Flag_Ranking_Disp_Position_y + 23);
 			GREEN;
 			printf("%2d", magazine_bullet);
@@ -1005,8 +1017,10 @@ int main()
 				{
 					was_reloading = false;
 					reloading_counter = 0;
-					gotoxy(Flag_Ranking_Disp_Position_x + 6, Flag_Ranking_Disp_Position_y + 26);
-					printf("  ");
+					gotoxy(Flag_Ranking_Disp_Position_x + 6, Flag_Ranking_Disp_Position_y + 25);
+					printf("         ");
+					gotoxy(Flag_Ranking_Disp_Position_x + 3, Flag_Ranking_Disp_Position_y + 26);
+					printf("               ");
 				}
 
 				if (magazine_bullet >= 0)
@@ -1059,8 +1073,9 @@ int main()
 			{
 				reloading_counter--;//reloading time count
 
-				gotoxy(Flag_Ranking_Disp_Position_x + 6, Flag_Ranking_Disp_Position_y + 26);
-				printf("%2d", reloading_counter);
+				gotoxy(Flag_Ranking_Disp_Position_x + 3, Flag_Ranking_Disp_Position_y + 26);
+				ORIGINAL;
+				printf("%d.%02ds remianing", reloading_counter / 25, (reloading_counter - reloading_counter / 25) % 100);
 
 				if (reloading_counter == (initial_magazine_size - magazine_bullet - 1) * initial_reloading_time_per_bullet && magazine_bullet < initial_magazine_size)
 				{
@@ -1070,11 +1085,13 @@ int main()
 					{
 						GREEN;
 						printf("%2d", magazine_bullet);
+						ORIGINAL;
 					}
 					else if (magazine_bullet > 0)
 					{
 						RED;
 						printf("%2d", magazine_bullet);
+						ORIGINAL;
 					}
 				}
 			}
@@ -1084,11 +1101,12 @@ int main()
 			enemay_creake(4);
 			enemy_cnt += 4;
 		}
-		if (sniper_cnt == 0)
+		/*if (sniper_cnt == 0)
 		{
-			sniper_cnt = rand() % 2 + 1;
+			//sniper_cnt = rand() % 2 + 1;
+			sniper_cnt = 1;
 			sniper_enemy_create(sniper_cnt);
-		}
+		}*/
 
 		if (count_sleep % 8 == 0)//in certain amount of time
 		{
@@ -1154,6 +1172,54 @@ int main()
 			{
 				for (int j = 0; j < width; j++)
 				{
+					if (map[i][j] > type7bandwidth && map[i][j] <= type7bandwidth + type7timer)
+					{
+						gotoxy(j, i);
+						printf(" ");
+
+						if (map[i + 1][((i + 1) - linear_b) / linear_a] == 0)
+						{
+							map[i + 1][((i + 1) - linear_b) / linear_a] = map[i][j] - 1;
+							gotoxy(((i + 1) - linear_b) / linear_a, i + 1);
+							RED;
+							printf("*");
+							ORIGINAL;
+						}
+						else if (map[i + 1][((i + 1) - linear_b) / linear_a] == 2 || map[i + 1][((i + 1) - linear_b) / linear_a] == 3)
+						{
+							//Player Hit
+							Beep(1106, 5);
+							lose_health_gague();
+
+							//initialie the bullet due to the lose of health
+							reloading_counter = 1;
+							magazine_bullet = initial_magazine_size;
+
+							gotoxy(Flag_Ranking_Disp_Position_x + 18, Flag_Ranking_Disp_Position_y + 23);
+							GREEN;
+							printf("%2d", magazine_bullet);
+							ORIGINAL;
+
+							if (score - minus_score_per_enemy_7 >= 0)
+								score -= minus_score_per_enemy_7;
+							else
+								score = 0;
+							if (map[i + 1][j] == 2)
+							{
+								if (map[i + 1][j + 1] == 3)
+								{
+									Blink_Player(3);
+								}
+								else
+									Blink_Player(3);
+							}
+							else
+								Blink_Player(3);
+
+						}
+						map[i][j] = 0;
+					}
+
 					if (map[i][j] > type5bandwidth && map[i][j] <= type5bandwidth + type5timer)
 					{
 						//move enemy bullet
@@ -1200,7 +1266,7 @@ int main()
 						map[i][j] = 0;
 
 					}
-					if (type5bandwidth == map[i][j])
+					if (type5bandwidth == map[i][j] || type7bandwidth == map[i][j])
 					{
 						//bullet moving time over
 						map[i][j] = 0;
@@ -1217,7 +1283,7 @@ int main()
 						}
 						else if (map[i + 1][j] == 0)
 						{
-							//enemy shoots the bulletdss
+							//enemy shoots the bullets
 							map[i + 1][j] = type5bandwidth + type5timer;
 							Beep(1551, 2);
 							gotoxy(j, i + 1);
@@ -1228,6 +1294,33 @@ int main()
 						}
 					}
 					else if (enemy[j][i].type == 5 && enemy[j][i].timer > 0)
+					{
+						enemy[j][i].timer--;
+					}
+
+					if (enemy[j][i].type == 7 && enemy[j][i].timer == 0 && rand() % 6 == 0)
+					{
+						if (map[i + 1][j] == 4)
+						{
+							map[i + 1][j] = 0;
+							gotoxy(j, i + 1);
+							printf(" ");
+						}
+						else if (map[i + 1][j] == 0)
+						{
+							//enemy type7 shoots the bullets
+							linear_a = (PX - i + 1) / (PY - j);
+							linear_b = j - i * linear_a;
+							map[i + 1][j] = type7bandwidth + type7timer;
+							Beep(1551, 2);
+							gotoxy(j, i + 1);
+							YELLOW;
+							printf("@");
+							ORIGINAL;
+							enemy[j][i].timer = type7timer;
+						}
+					}
+					else if (enemy[j][i].type == 7 && enemy[j][i].timer > 0)
 					{
 						enemy[j][i].timer--;
 					}
