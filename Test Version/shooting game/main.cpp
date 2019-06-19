@@ -55,7 +55,7 @@ char konami_answer[11] = {"wwssadadba"};
 int K_code_cnt = 0;
 int reloading_counter = 0;
 bool was_reloading = false;
-int linear_a, linear_b;
+float linear_a, linear_b;
 
 int magazine_bullet = initial_magazine_size;
 
@@ -278,7 +278,8 @@ void map_print()
 
 	SKY_BLUE
 	gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + 18);
-	printf(" andylang8445: %5d", score);
+	//printf(" andylang8445: %5d", score);
+	printf("       Player: %5d", score);
 	ORIGINAL;
 
 	gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + 23);
@@ -605,7 +606,7 @@ int main()
 	
 	system("title Shooting Game");//set the title of the screen
 	printf("\tWe will redirect you to the user manual shortly...");
-	Sleep(50);
+	Sleep(500);
 	system("start https://andylang8445.github.io/school%20class/school_grade11/project/computer%20science/user%20manual/2019/06/16/User_Manual_ICS3U_Final_Project/#more");
 
 	printf("\tPress any key to start the game\n");
@@ -1101,12 +1102,12 @@ int main()
 			enemay_creake(4);
 			enemy_cnt += 4;
 		}
-		/*if (sniper_cnt == 0)
+		if (sniper_cnt == 0)
 		{
 			//sniper_cnt = rand() % 2 + 1;
 			sniper_cnt = 1;
 			sniper_enemy_create(sniper_cnt);
-		}*/
+		}
 
 		if (count_sleep % 8 == 0)//in certain amount of time
 		{
@@ -1174,18 +1175,21 @@ int main()
 				{
 					if (map[i][j] > type7bandwidth && map[i][j] <= type7bandwidth + type7timer)
 					{
+
+						//move enemy type7 bullet
 						gotoxy(j, i);
 						printf(" ");
+						//printf("%d", linear_a);
 
-						if (map[i + 1][((i + 1) - linear_b) / linear_a] == 0)
+						if (map[i + 1][(int)(((i + 1) - linear_b) / linear_a)] == 0)
 						{
-							map[i + 1][((i + 1) - linear_b) / linear_a] = map[i][j] - 1;
+							map[i + 1][(int)(((i + 1) - linear_b) / linear_a)] = map[i][j] - 1;
 							gotoxy(((i + 1) - linear_b) / linear_a, i + 1);
 							RED;
 							printf("*");
 							ORIGINAL;
 						}
-						else if (map[i + 1][((i + 1) - linear_b) / linear_a] == 2 || map[i + 1][((i + 1) - linear_b) / linear_a] == 3)
+						else if (map[i + 1][(int)(((i + 1) - linear_b) / linear_a)] == 2 || map[i + 1][(int)(((i + 1) - linear_b) / linear_a)] == 3)
 						{
 							//Player Hit
 							Beep(1106, 5);
@@ -1309,13 +1313,31 @@ int main()
 						else if (map[i + 1][j] == 0)
 						{
 							//enemy type7 shoots the bullets
-							linear_a = (PX - i + 1) / (PY - j);
-							linear_b = j - i * linear_a;
+							if (PX - j > 0 && PX - j <= 0.1)
+							{
+								linear_a = -100;//(PY - i + 1);
+							}
+							else if (PX - j < 0 && PX - j >= -0.1)
+							{
+								linear_a = +100;//(PY - i + 1);
+							}
+							else
+								linear_a = (PY - i + 1) / (PX - j);
+
+							
+							if (linear_a >= 0.0 && linear_a < 1)//Working required
+								linear_a = 1;
+							else if (linear_a < 0.0 && linear_a > -1)
+								linear_a = -1;
+
+							gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + 11);
+							printf("linear_a: %.2f", linear_a);
+							linear_b = i + 1 - j * linear_a;
 							map[i + 1][j] = type7bandwidth + type7timer;
 							Beep(1551, 2);
 							gotoxy(j, i + 1);
-							YELLOW;
-							printf("@");
+							RED;
+							printf("*");
 							ORIGINAL;
 							enemy[j][i].timer = type7timer;
 						}
@@ -1344,6 +1366,15 @@ int main()
 	for (int i = 0; i < 15; i++)
 	{
 		Sleep(5);
+		if (_kbhit)
+			break;
 	}
-	_getch();
+	Sleep(200);
+	system("cls");
+	gotoxy(width / 2 - 10, height);
+	RED;
+	printf("Planning doc will appear shortly...");
+	Sleep(1000);
+	ORIGINAL;
+	system("start https://andylang8445.github.io/school%20class/school_grade11/project/computer%20science/2019/05/29/ICS3U_Final_Project/");
 }
