@@ -28,3 +28,9 @@
 # User Manual - Scoring
   - If the player gets hit by enemy's bullet, the player will lose certain amount of total score
   - If the player's bullet hits the enemy, the player will get a certain amount of score based on the type on enemy
+
+#User Manual - Information
+  - At the right side of the game screen, the information will appear
+    - Real-time ranking
+    - The number of bullets remaining
+    - Current player's score
