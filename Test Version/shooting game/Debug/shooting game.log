@@ -1,12 +1,12 @@
 ﻿  main.cpp
-F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(86,16): warning C4838:  'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
-F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(86,21): warning C4838:  'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
-F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(538,17): warning C4244:  '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(605,12): warning C4244:  '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(647,17): warning C4244:  '인수': '__int64'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(1187,36): warning C4244:  '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(1208,41): warning C4244:  '-=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(1256,41): warning C4244:  '-=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(1325,33): warning C4244:  '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(1369,7): warning C4551:  함수 호출에 인수 목록이 없습니다.
+F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(91,16): warning C4838:  'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(91,21): warning C4838:  'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(555,17): warning C4244:  '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(622,12): warning C4244:  '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(675,17): warning C4244:  '인수': '__int64'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(1215,36): warning C4244:  '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(1236,41): warning C4244:  '-=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(1284,41): warning C4244:  '-=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(1358,33): warning C4244:  '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+F:\Final Project\Shooting_Game\Test Version\shooting game\main.cpp(1486,7): warning C4551:  함수 호출에 인수 목록이 없습니다.
   shooting game.vcxproj -> F:\Final Project\Shooting_Game\Test Version\Debug\shooting game.exe

@@ -35,6 +35,11 @@
 #define original_mag_size 30
 #define original_reloading_time 4
 
+
+char ranking_name[6][8];
+int ranking_score[6];
+char player_name_current[8];
+
 int initial_magazine_size = original_mag_size;
 int initial_reloading_time_per_bullet = original_reloading_time;
 int map[height][width], PX = PX_origin, PY = PY_origin;
@@ -194,10 +199,22 @@ void map_print()
 				printf("@");
 				ORIGINAL;
 			}
+			else if (map[i][j] >= type7bandwidth && map[i][j] <= type7bandwidth + type7timer)
+			{
+				RED;
+				printf("@");
+				ORIGINAL;
+			}
 			else if (enemy[j][i].type == 5)
 			{
 				RED;
 				printf("%%");
+				ORIGINAL;
+			}
+			else if (enemy[j][i].type == 7)
+			{
+				ORANGE;
+				printf("&");
 				ORIGINAL;
 			}
 		}
@@ -270,10 +287,10 @@ void map_print()
 	}
 
 	//print personalized/active information
-	for (int i = 1; i <= 5; i++)
+	for (int i = 0; i < 5; i++)
 	{
-		gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + 5 + (i - 1) * 2);
-		printf("%d. Player1  %7d", i, 512 - 4 * (i - 1));
+		gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + 5 + i * 2);
+		printf("%d. %s  %7d", i + 1, ranking_name[i], ranking_score[i]);
 	}
 
 	SKY_BLUE
@@ -603,10 +620,21 @@ void lose_health_gague()
 int main()
 {
 	srand(time(NULL));
-	
+	ranking_score[5] = -11;
+	errno_t err;
+	FILE* fp;
+	err = fopen_s(&fp, "C:\\C_fopen\\db.txt", "r");
+	for (int i = 0; i < 5; i++)
+	{
+		int j;
+		for (j = 0; ranking_name[i][j] != ' '; j++);
+		fscanf_s(fp, "%s ", ranking_name[i], _countof(ranking_name[i]));
+		fscanf_s(fp, "%d", &ranking_score[i]);
+	}
 	system("title Shooting Game");//set the title of the screen
 	printf("\tWe will redirect you to the user manual shortly...");
 	Sleep(500);
+	//show the manual
 	system("start https://andylang8445.github.io/school%20class/school_grade11/project/computer%20science/user%20manual/2019/06/16/User_Manual_ICS3U_Final_Project/#more");
 
 	printf("\tPress any key to start the game\n");
@@ -1313,26 +1341,42 @@ int main()
 						else if (map[i + 1][j] == 0)
 						{
 							//enemy type7 shoots the bullets
-							if (PX - j > 0 && PX - j <= 0.1)
+							gotoxy(PX, PY + 2);
+							if (PX - j > 0.0 && PX - j <= 0.1)
 							{
-								linear_a = -100;//(PY - i + 1);
+								linear_a = +125;
+								printf("+128");
 							}
-							else if (PX - j < 0 && PX - j >= -0.1)
+
+
+							else if ((PX - j) < 0 && (PX - j) >= -0.1)
 							{
-								linear_a = +100;//(PY - i + 1);
+								linear_a = -125;
+								printf("-128");
 							}
-							else
+							else if (PX - j != 0)
 								linear_a = (PY - i + 1) / (PX - j);
 
 							
 							if (linear_a >= 0.0 && linear_a < 1)//Working required
+							{
 								linear_a = 1;
+								//printf("+22");
+							}
 							else if (linear_a < 0.0 && linear_a > -1)
 								linear_a = -1;
-
-							gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + 11);
-							printf("linear_a: %.2f", linear_a);
+							
 							linear_b = i + 1 - j * linear_a;
+
+							/*gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + 6);
+							printf("PX-j: %d", PX - j);
+							gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + 8);
+							printf("PY-i+1: %d", PY - i + 1);
+							gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + 10);
+							printf("linear_a: %.2f", linear_a);
+							gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + 12);
+							printf("linear_b: %.2f", linear_b);*/
+
 							map[i + 1][j] = type7bandwidth + type7timer;
 							Beep(1551, 2);
 							gotoxy(j, i + 1);
@@ -1349,12 +1393,85 @@ int main()
 				}
 			}
 		}
-		if (score_change == true)
+		if (score_change == true)//real-time ranking system
 		{
+			if (ranking_score[5] == -11)
+			{
+				strcpy_s(ranking_name[5], "Player");
+				ranking_score[5] = score;
+			}
+			else
+			{
+				for (int i = 0; i < 6; i++)
+				{
+					if (strcmp(ranking_name[i], "Player") == 0)
+					{
+						ranking_score[i] = score;
+					}
+				}
+			}
+			for (int i = 0; i < 5; i++)
+			{
+				for (int j = i + 1; j < 6; j++)
+				{
+					char temp_name[8];
+					int temp_score;
+					if (ranking_score[i] < ranking_score[j])
+					{
+						strcpy_s(temp_name, ranking_name[i]);
+						temp_score = ranking_score[i];
+
+						strcpy_s(ranking_name[i], ranking_name[j]);
+						ranking_score[i] = ranking_score[j];
+
+						strcpy_s(ranking_name[j], temp_name);
+						ranking_score[j] = temp_score;
+					}
+				}
+			}
+
+			for (int i = 0; i < 5; i++)
+			{
+				gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + 5 + i * 2);
+				printf("                      ");
+				gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + 5 + i * 2);
+				printf("%d. ", i + 1);
+				if (strcmp(ranking_name[i], "Player") == 0)
+				{
+					SKY_BLUE;
+					printf("%s  %7d", ranking_name[i], ranking_score[i]);
+					ORIGINAL;
+				}
+				else
+					printf("%s  %7d", ranking_name[i], ranking_score[i]);
+			}
+
 			SKY_BLUE;
 			gotoxy(Flag_Ranking_Disp_Position_x + playerID_charactor, Flag_Ranking_Disp_Position_y + 18);
 			printf("%5d", score);
 			ORIGINAL;
+
+			/*for (int i = 0; i < 5; i++)
+			{
+				if (score > ranking_score[i])
+				{
+					gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + 5 + i * 2);
+					printf("                  ");
+					SKY_BLUE;
+					gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + 5 + i * 2);
+					printf("%d. Player  %7d", i + 1, score);
+					ORIGINAL;
+					for (int j = i; j < 5; j++)
+					{
+						gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + 5 + j * 2);
+						printf("                  ");
+						gotoxy(Flag_Ranking_Disp_Position_x, Flag_Ranking_Disp_Position_y + 5 + j * 2);
+						printf("%d. %s  %7d", j + 1, ranking_name[i], ranking_score[i]);
+					}
+					break;
+				}
+			}*/
+			score_change = false;
 		}
 		Sleep(5);//give delay to operate the game properly that player can play
 		break_check = true;
@@ -1370,11 +1487,34 @@ int main()
 			break;
 	}
 	Sleep(200);
+	system("mode con cols=64 lines=8");//set the size of the screen
 	system("cls");
+	gotoxy(24, 4);
+	printf("Please enter your name: ");//gets current players name
+	gets_s(player_name_current);
+	for (int i = 0; i < 6; i++)
+	{
+		if (strcmp(ranking_name[i], "Player") == 0)
+		{
+			strcpy_s(ranking_name[i], player_name_current);
+			break;
+		}
+	}
+	fclose(fp);
+
+	//records the data to the DB
+	err = fopen_s(&fp, "C:\\C_fopen\\db.txt", "w");
+	for (int i = 0; i < 5; i++)
+	{
+		fprintf(fp, "%s ", ranking_name[i]);
+		fprintf(fp, "%d\n", ranking_score[i]);
+	}
+	fclose(fp);
 	gotoxy(width / 2 - 10, height);
 	RED;
 	printf("Planning doc will appear shortly...");
 	Sleep(1000);
 	ORIGINAL;
+	//show the planning&testing doc
 	system("start https://andylang8445.github.io/school%20class/school_grade11/project/computer%20science/2019/05/29/ICS3U_Final_Project/");
 }
